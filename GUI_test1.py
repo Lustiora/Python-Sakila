@@ -1,5 +1,8 @@
 import tkinter # Python 기본 GUI Package
 from tkinter import messagebox # 팝업창 GUI Package
+import psycopg2  # postgresql Connect Package
+from tkinter import scrolledtext # Log Window Print Package
+from datetime import datetime, timedelta # Date Module
 ######################################
 # Login 모듈 (from tkinter import messagebox)
 count = 3
@@ -10,24 +13,29 @@ def user_login(event=None): # event=None을 추가하여 event값 입력 받음�
     print(f"ID : {login_id} | PW : {login_pw}")
     print("DB Connected ...")
     count = count - 1
-    if login_id == "lus" or login_pw == "tiger": # 일치조건 > DB 연동 예정
-        print("Login Successful")
-        messagebox.showinfo("Login", "Login Successful")
-        login.destroy() # Window (Login) 종료
-        run_main()
-    else:
-        print("Login Failed")
-        messagebox.showinfo("Login", f"Login Failed\nChance(3) : {count}")
-    if count == 0:
-        messagebox.showinfo("Login", "Please Contact the Administrator")
-        print("Not Connected")
+    try:
+        # 연결 함수가 성공해서 반환값을 주면, conn은 더 이상 None이 아님
+        conn = psycopg2.connect(dbname='DVD Rental',
+                                host='localhost',
+                                port='5432',
+                                user=login_id,  # 입력된 ID가 작성되는곳
+                                password=login_pw)  # 입력된 PW가 작성되는곳
+        print("Connection Established")  # 연결 성공시 출력
         login.destroy()
+        run_main(conn)
+    except:  # 실패시
+        print(f"Login Failed | Chance(3) : {count}")
+        messagebox.showinfo("Login", f"Login Failed\nChance(3) : {count}")
+        if count == 0:
+            messagebox.showinfo("Login", "Please Contact the Administrator")
+            print("Not Connected")
+            login.destroy()
 ######################################
 # Window (Main) 모듈 (tkinter)
-def run_main():
+def run_main(conn):
     main = tkinter.Tk()
     main.title("Sakila DB")
-    center_window(main, 600, 400)
+    center_window(main, 700, 400)
     ######################################
     # 입력값 검사 모듈
     def check_digit(incoming): # incoming: 사용자가 입력을 마친 후의 '결과값' (%P)
@@ -41,6 +49,68 @@ def run_main():
     def search_db():
         customer = customer_date.get() # .get().strip() > 입력받은 customer_date를 가져오고 앞뒤 공백 제거 > 앞뒤 공백 제거 부분은 검사 모듈과 겹치기에 삭제
         print(f"Customer ID Check ... {customer}")
+        cursor = conn.cursor()
+        log_area.configure(state="normal")
+        try:
+            cursor.execute("select c.customer_id , c.first_name||' '||c.last_name as Name, c.email from customer c where c.customer_id = %s", (customer,))  # DB에 질의 전송 , customer_id 존재여부
+            customer_data = cursor.fetchone()  # 결과 데이터 가져오기 cursor.fetchone()
+            log_area.delete(1.0, tkinter.END) # 로그창 초기화
+            if customer_data:  # 쿼리값 존재시
+                log_area.insert(tkinter.END, f"ID : {customer_data[0]} | Name : {customer_data[1]} | Email : {customer_data[2]}\n")
+                process_return(conn,customer)
+            else:  # 쿼리값 미존재시
+                print(f"Customer Not Found {customer}")
+                log_area.insert(tkinter.END, "Customer Not Found\n")
+        except Exception as e:  # 에러 체크
+            print(f"Error: {e}")
+            conn.rollback()  # 에러 발생시 롤백
+            print("---Rolled Back---")
+        log_area.configure(state="disabled")
+        ######################################
+    def process_return(conn, customer):  # 반납 정의
+        cursor = conn.cursor()
+        cursor.execute("select * from rental where customer_id = %s and return_date is null",
+                       (customer,))  # 조회된 customer_id의 return_date 여부 조회
+        rental_data = cursor.fetchone()
+        log_area.configure(state="normal")
+        if rental_data:  # return_date is null
+            today = datetime.now().date()
+            print("-" * 50)
+            print("Please Return DVD")
+            log_area.insert(tkinter.END,"---------------------------------------------------------------------------------------------\n"
+                                        "Please Return DVD\n")
+            cursor.execute("""
+                           select r.customer_id,
+                                  f.title,
+                                  r.rental_date,
+                                  f.rental_rate
+                           from rental r
+                                    inner join inventory i
+                                               on r.inventory_id = i.inventory_id
+                                    inner join film f
+                                               on i.film_id = f.film_id
+                           where customer_id = %s
+                             and r.return_date is null
+                           """, (customer,))
+            return_dvd = cursor.fetchall()
+            total_charge = 0
+            for barcode in return_dvd:
+                return_date = barcode[2].date()
+                all_charge = float((today - return_date).days * barcode[3]) * float(1.1)
+                total_charge += all_charge  # 전체값 누적
+                print(
+                    f"Customer Id : {barcode[0]} | "
+                    f"Title : {barcode[1]} | "
+                    f"Rental Date : {(today - return_date).days} days | "
+                    f"Charge : {all_charge:.2f}")  # 소수점 2번째 자리까지만 출력 :.2f
+                log_area.insert(tkinter.END,f"Title : {barcode[1]} | Rental Date : {(today - return_date).days} days | Charge : {all_charge:.2f}\n")
+            print(f"\nTotal Charge : {total_charge:.2f}")
+            log_area.insert(tkinter.END, f"\nTotal Charge : {total_charge:.2f}")
+            print("-" * 50)
+            log_area.configure(state="disabled")
+    ######################################
+    ### 화면 구성
+    ## Customer Search
     search_frame = tkinter.LabelFrame(main, text="Customer Search")
     search_frame.pack(fill="x", padx=5, pady=5) # pack(fill="x") > width = 최대치
     tkinter.Label(search_frame, text="Customer ID :").pack(side="left", padx=5, pady=5) # grid 대신 pack 사용 / side="left" > 읽는 순서대로 좌측 정렬
@@ -48,6 +118,21 @@ def run_main():
     # validate="key" > 입력값 상시확인 / validatecommand=(validation, '%P') > check_digit 모듈을 통과하는 입력값(%p)만 허용
     customer_date.pack(side="left", padx=5, pady=5)
     tkinter.Button(search_frame, text="Search", command=search_db).pack(side="left", padx=5, pady=5)
+    ######################################
+    ## Log Area
+    log_frame = tkinter.LabelFrame(main, text="Customer Details")
+    log_frame.pack(fill="both", expand=True, padx=5, pady=5) # fill="both", expand=True > 잔여 공간 전부 할당
+    log_area = scrolledtext.ScrolledText(log_frame, height=10, state="disabled") # Log 출력 공간
+    log_area.pack(fill="both", expand=True, padx=5, pady=5)
+    ######################################
+    # DB 조회 종료창 모듈
+    def on_closing():
+        if messagebox.askokcancel("Quit", "Exit?"):
+            conn.close()  # DB 연결 끊기 (유령 연결 방지)
+            main.destroy()
+    # 메인 윈도우의 닫기 프로토콜에 연결
+    main.protocol("WM_DELETE_WINDOW", on_closing)
+    ######################################
     main.mainloop()
 ######################################
 # Window 자동 중앙 정렬 모듈 (미정렬 시 좌측 상단) (tkinter)
