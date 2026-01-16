@@ -34,6 +34,8 @@ def user_login(event=None): # event=None을 추가하여 event값 입력 받음�
 ######################################
 # Window (Main) 모듈 (tkinter)
 def run_main(conn):
+    global current_customer_id # 전역 변수로 지정하여 입력 여부 확인
+    current_customer_id = None # 변수값 지정
     main = tkinter.Tk()
     main.title("Sakila DB")
     center_window(main, 700, 400)
@@ -48,6 +50,8 @@ def run_main(conn):
     ######################################
     # DB 조회 모듈
     def search_db(event=None):
+        global current_customer_id
+        current_customer_id = None
         customer = customer_date.get() # .get().strip() > 입력받은 customer_date를 가져오고 앞뒤 공백 제거 > 앞뒤 공백 제거 부분은 검사 모듈과 겹치기에 삭제
         print(f"Customer ID Check ... {customer}")
         cursor = conn.cursor()
@@ -59,10 +63,13 @@ def run_main(conn):
             if customer_data:  # 쿼리값 존재시
                 log_area.insert(tkinter.END, f"ID : {customer_data[0]} | Name : {customer_data[1]} | Email : {customer_data[2]}\n")
                 process_return(conn,customer)
+                current_customer_id = customer_data[0]
             else:  # 쿼리값 미존재시
+                current_customer_id = None
                 print(f"Customer Not Found {customer}")
                 log_area.insert(tkinter.END, "Customer Not Found\n")
         except Exception as e:  # 에러 체크
+            current_customer_id = None
             print(f"Error: {e}")
             conn.rollback()  # 에러 발생시 롤백
             print("---Rolled Back---")
@@ -117,16 +124,27 @@ def run_main(conn):
             log_area.configure(state="normal")
     ######################################
     def process_rental(event = None):  # 대여 정의
+        global current_customer_id
         cursor = conn.cursor()
         barcode = dvd_barcode.get()
+        rental = []
         rental_cart = []
         total_fee = 0
         log_area.configure(state="normal")
+        if current_customer_id is None:
+            print("Please Input Customer ID")
+            log_area.insert(tkinter.END, "-" * 93 + "Please Input Customer ID\n")
+            log_area.configure(state="disabled")
+            customer_date.focus_set()
+            dvd_barcode.delete(0, tkinter.END)  # dvd_barcode 입력값 삭제
+            return
         if not barcode:
             print("-" * 93)
             print("Please Input Barcode")
             log_area.insert(tkinter.END, "-" * 93 +"Please Input Barcode\n")
             log_area.see(tkinter.END)
+            dvd_barcode.focus_set()
+            dvd_barcode.delete(0, tkinter.END)  # dvd_barcode 입력값 삭제
             return
         try:
             cursor.execute("""SELECT inventory.inventory_id, film.title, film.rental_rate
@@ -134,33 +152,37 @@ def run_main(conn):
                                        INNER JOIN film ON inventory.film_id = film.film_id
                               WHERE inventory.inventory_id = %s""", (barcode,))
             dvd_data = cursor.fetchone()
-            # today = datetime.now().date()  # 현재 날짜
-            # print("-" * 50)
-            # print("Please Rental Date (1 , 3 , 7) :")
+            today = datetime.now().date()  # 현재 날짜
+            print("-" * 50)
+            print("Please Rental Date (1 , 3 , 7) :")
             # input_date = input().strip()
-            # if input_date in ['1', '3', '7']:  # 1 , 3 , 7 강제
-            #     rental = int(input_date)  # 입력받은 값을 int로 변환
-            # else:
-            #     print("-" * 50)
-            #     print("Please Rental Date (1 , 3 , 7) :")
-            # rental_days = timedelta(days=rental)  # timedelta 함수를 사용하여 rental_days을 days로 지정
-            # rental_fee = dvd_data[2] * rental
+            input_date = simpledialog.askinteger(title="Rental Date", parent=main, minvalue=1, maxvalue=7, prompt="Rental Date (1 , 3 , 7)")
+            if input_date in [1 , 3 , 7]:  # 1 , 3 , 7 강제
+                rental = input_date  # 입력받은 값을 int로 변환
+            else:
+                print("-" * 50)
+                print("Please Rental Date (1 , 3 , 7) :")
+                messagebox.showwarning("Warning", "Only 1, 3, 7 days allowed")
+                dvd_barcode.focus_set()
+            rental_days = timedelta(days=rental)  # timedelta 함수를 사용하여 rental_days을 days로 지정
+            rental_fee = dvd_data[2] * rental
             inventory_id = dvd_data[0]
-            # return_date = today + rental_days
-            # rental_date = today
+            return_date = today + rental_days
+            rental_date = today
             title = dvd_data[1]
             print("-" * 93)
             print(f"Barcode : {inventory_id} | Title : {title} | Rental : {dvd_data[2]}")  # Query Column 기반 위치에 따른 값 출력
-            log_area.insert(tkinter.END, "-" * 93 + f"\nBarcode : {inventory_id} | Title : {title} | Rental : {dvd_data[2]}\n")
+            log_area.insert(tkinter.END, "-" * 93 + f"\nBarcode : {inventory_id} | Title : {title} | Rental : ${dvd_data[2]} x {rental}days\n")
             log_area.see(tkinter.END)
-            # print(
-            #     f"\nToday : {rental_date} | Return Date : {return_date} | Rental : {rental_fee}")  # today와 timedelta 변환된 rental_days 합산하여 Return Date 출력
-            # rental_cart.append((inventory_id, title, rental_date, rental_fee))  # 출력이 필요한 정보 포장
-            # total_fee += rental_fee  # 대여료 합산
-            # return inventory_id , rental_date , return_date
+            print(f"\nToday : {rental_date} | Return Date : {return_date} | Rental : {rental_fee}")  # today와 timedelta 변환된 rental_days 합산하여 Return Date 출력
+            rental_cart.append((inventory_id, title, rental_date, rental_fee))  # 출력이 필요한 정보 포장
+            total_fee += rental_fee  # 대여료 합산
+            log_area.insert(tkinter.END,"-" * 93 + f"\nTotal Fee : {total_fee}\n")
+            log_area.see(tkinter.END)
+            dvd_barcode.delete(0, tkinter.END)  # dvd_barcode 입력값 삭제
+            dvd_barcode.focus_set()
+            return inventory_id , rental_date , return_date
         except Exception as e:  # 에러 체크
-            log_area.insert(tkinter.END, "-" * 93 + f"Not DVD Barcode\n")
-            log_area.see(tkinter.END)
             print(f"Error: {e}")
             print("-" * 93)
             conn.rollback()  # 에러 발생시 롤백
@@ -173,15 +195,20 @@ def run_main(conn):
             print(f"\nTotal Fee : {total_fee}")
             return rental_cart, total_fee
         log_area.configure(state="disabled")
-        dvd_barcode.delete(0, tkinter.END) # dvd_barcode 입력값 삭제
         return None, 0
     ######################################
     def fee_calculation(event = None): # 정산 기능
+        global current_customer_id
         log_area.configure(state="normal")
+        print("-" * 93)
+        print("Is the bill paid?")
         messagebox.showinfo("Calculation", "Is the bill paid?")
-        log_area.insert(tkinter.END,"-" * 93 + "Settlement Completed")
-        log_area.see(tkinter.END)
+        print("-" * 93)
+        print("Settlement Completed")
+        log_area.delete(1.0, tkinter.END)  # 로그창 초기화
+        log_area.insert(tkinter.END,"Settlement Completed\n")
         log_area.configure(state="disabled")
+        current_customer_id = None
     ######################################
     ### 화면 구성
     ## Customer Search
