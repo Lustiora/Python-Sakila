@@ -1,30 +1,139 @@
 # Python-Sakila
 > Sakila DB > Read POS (Point of Sales) Simulator
 
-## Future Improvements
+## Basic Logic 2.0
 
-* Sakila DB를 재확인한 결과 상상이상으로 많은 데이터가 정리되어있음을 확인하여 **새로운 Logic의 필요성을 확인**
-  * 현재
-    * 관리자확인 > 고객확인 > 대여이력확인 > 재고확인 > 결제
-    * 대여 가능 기간, 그에 따른 대여 비용은 사전에 정의되어있음
-    *  관리자확인을 대신하는 Staff Table
-  * 이후
-    * 특정 폴더에 로그와 psycopg2.connect 정보를 저장하는(이후 정보) ini 파일 생성
-      * 실행시 특정 폴더에 정보 ini 파일이 없는 경우 로그인 Window 실행 전 psycopg2.connect 정보를 입력하는 Window 실행하고 저장 > (Host, User, ...)
-      * 정보 ini 파일이 있는경우 바로 로그인 Window 실행 > (Staff Table)
-    * 대여 정의 모듈에서 현재 대여 중인 dvd 의 경우 '이미 대여중인 dvd입니다.' 문구 출력 > 연체료, 대여료, 장바구니 초기화하여 결제 불가능하게 설정
-    * Title Search Window 추가
-      * Columns (Title , All Count , Rent Count , Rental available Count)
-      * Search Window에 검색어 없이 검색하면 전체 목록이 출력
-      * Title Name 일부를 검색하면 해당하는 목록이 출력
-      * film table > fulltext column 사용
-    * DB date 값 최신화 필요 (rental date 2006-02-14 / last return date 2005-09-02 |  + interval '19 year 11 month')
-    * Log_area / tkinter GUI Change
-      * [Flet](https://github.com/flet-dev/flet)
-    * Rank Window > (현재 시간 기준 Week Rank, Month Rank, Year Rank) 추가
-      * Columns (Rank , Title , Description (설명), Rating (관람등급), category(장르)(film > film_category > category Table)
+### 1. Login Logic
 
-## Basic Logic
+1. **DB 연결정보를 확인**
+    - 연결정보가 저장된 INI File 유무 확인
+    - 화이트 리스트만 연결 가능
+        - DB Connect Count = **3**
+        - 1-1. 해당 정보로 연결시도
+            - 일치 print _DB Connect_ > `2`
+            - 불일치 >> Count **-1** Print _Not Connected_
+                - Count == **0** Print _Please Contact the Administrator / Phone : 010-1234-5678_ > `1-2`
+        - 1-2. 새로운 정보 정의 화면 출력
+            - dbname, host(domain), port, user, password > Save INI File > `1-1`
+
+2. **직원 ID를 확인 (Barcode) (Staff-Table)**
+    - Login Count = **3**
+    - DB (Staff Table)에 해당하는 로그인 정보(username, password, active == `True`) 확인
+        - 일치 >> `DB Access`
+        - 불일치 >> Count **-1** Print _Login Failed / Chance(Count)_
+            - Count == **0** Print _Please Contact the Administrator / Phone : 010-1234-5678_ _End_
+
+### 2. Customer Check / Return / Rental / Calculation Logic
+
+1. **회원 여부 확인 (Barcode) (Customer-Table)**
+    - 1-1. 고객 ID를 확인 (customer_id)
+        - 확인 `1 End`
+        - 미확인 `1-2`
+        - 미회원 `1-3`
+    - 1-2. 고객 정보 검색 화면 출력
+        - `first name` or `last name` or `email` Search Button
+        - Columns `first name`, `last name`, `email`
+            - 확인 `1-1`
+            - 미확인 `1-2`
+    - 1-3. 신규 고객 추가 (Customer-Table)
+        - customer_id = Last customer_id +1 (DB -> SERIAL 혹은 SEQUENCE)
+        - store_id = Connect Staff ID = store_id
+        - first_name, last_name, email
+        - address_id = Address-Table > Last address_id +1 (DB -> SERIAL 혹은 SEQUENCE) / New Rows
+
+2. **재고 확인 (Barcode) (Inventory-Table)**
+    - 2-1. 상품 Barcode 확인 (inventory_id, Connect Staff ID = store_id)
+        - 확인 `2-2`
+        - 미확인 `2-4`
+    - 2-2. 상품 상태 확인
+        - 대여중 inventory_id > Rental-Table > return_date is null
+        - 대여가능 `2-3`
+    - 2-3. 해당하는 Film 정보 출력 (film_id > Film-Table join Film_Category-Table join Category-Table > name) > `2 End`
+        - Columns `film_id`, `title`, `rental_duration`, `rental_rate`, `rating`, `name`
+    - 2-4. 재고 정보 검색 화면 출력 > `2-1`
+        - Inventory-Table join Film-Table join Store-Table join Address-Table
+        - `inventory_id` or `title(fulltext)` Search Button
+        - Columns `inventory_id`, `title`, `story_id`, `city_id`, `address`, `phone`, `inventory (가용 / 전체)`
+    - 2-5. 신규 재고 추가 (Inventory-Table)
+        - inventory_id = Last inventory_id +1 (DB -> SERIAL 혹은 SEQUENCE)
+        - film_id = 
+            - 기존 Film이 있는경우 그대로 사용
+            - 새로운 Film의 경우 `2-6`
+    - 2-6. 신규 Film 추가 (Film-Table)
+        - film_id = Last film_id +1 (DB -> SERIAL 혹은 SEQUENCE)
+        - title = New title
+        - description = New description
+        - release_year = New release_year
+        - language_id = Language-Table >= language_id
+        - rental_duration = Default 3 or 
+        - rental_rate = Default 4.99 or
+        - length = New length
+        - replacement_cost = Default 19.99 or
+        - rating = G or PG or PG-13 or R or NC-17
+        - category = Category-Table >= name
+        - Film_Actor-Table
+            - 존재하는 경우 해당하는 Actor 연결
+            - 존재하지 않는 경우 `2-7`
+    - 2-7. 신규 Actor 추가 (Actor-Table)
+        - actor_id = Last actor_id +1 (DB -> SERIAL 혹은 SEQUENCE)
+        - first_name , last_name
+
+3. **반납 (Rental-Table)**
+    - `1` = %s > customer_id = %s, return_date is null
+        - Film List 출력 (film_id > Film-Table)
+        - Columns `film_id`, `title`, `rental_rate`, `rental_date`, `return_date`, `replacement_cost`
+            - ((`return_date` - 현재 날짜) <= 0) > 반납 > _End_
+        - 연체
+            - (`return_date` - 현재 날짜) > 0 // `over_rate` 추가 (+ 분실/손상 시 = + `replacement_cost`)
+            - `over_rate` = (`return_date` - 현재 날짜) * (`rental_rate` / `rental_duration`) * 1.1
+            - (반납 and `over_rate` + `5`) or (반납 + `4` + `over_rate` + `5`) > _End_
+
+4. **대여 (Rental-Table) & 결제**
+    - Rental-Table
+        - `1` = %s // customer_id = %s (Customer-Table)
+        - `2` > `5` or (Rental_Cart > `5`) else `2-2` Global Fee, Cart Reset, print _이미 대여중인 dvd입니다._
+    - Payment-Table
+        - payment_id = last payment_id +1 (DB -> SERIAL 혹은 SEQUENCE)
+        - customer_id = `1`
+        - staff_id = Connect Staff ID
+        - rental_id = last rental_id +1 (DB -> SERIAL 혹은 SEQUENCE) (Rental-Table)
+        - amount = 전체 결제 금액 (global fee) = (대여금액 (All `rental_rate`) + 연체금액 (All `over_rate`))
+        - payment_date = 결제 일시
+    - Rental-Table
+        - rental_id = last rental_id +1 (DB -> SERIAL 혹은 SEQUENCE)
+        - rental_date = 대여 일시
+        - inventory_id = `2`
+        - customer_id = `1`
+        - return_date = `2`
+        - staff_id = Connect Staff ID
+    - 전체 과정 실패 시 `rollback`
+    - _End_
+
+### Window
+1. DB Connect Window `1`
+2. Staff Login Window `2`
+3. Main Window
+    - Menubar
+        - 메뉴
+            - 상태 (DB 연결, 직원 정보)
+            - 종료 _End_
+        - 조회 & 변경 & 삭제
+            - 고객 (Customer-Table)
+            - 재고 (Inventory-Table)
+            - 대여 (Rental-Table)
+            - 결제 (Payment-Table)
+        - 추가
+            - 고객 (Customer-Table)
+            - 재고 (Inventory-Table)
+            - 영화 (Film-Table) (C: fulltext)
+            - 배우 (Actor-Table)
+            - 장르 (Category-Table)
+        - 통계 (대여 / 반납 , 대여 Top 10 (영화, 장르, 등급 Count))
+        - 관리
+            - 직원 (Staff-Table)
+
+<details>
+<summary>Old Basic Logic 1.0</summary>
 
 1. **사용자 ID를 확인**
    - 1-1. 대여중/연체중인 DVD가 존재하는 경우 > **3-2**
@@ -63,6 +172,31 @@
   * Factor: `1.1` (연체 시 1.1배 적용)
 
 </details>
+
+</details>
+
+## Future Improvements
+
+* Sakila DB를 재확인한 결과 상상이상으로 많은 데이터가 정리되어있음을 확인하여 **새로운 Logic의 필요성을 확인**
+  * Old
+    * 관리자확인 > 고객확인 > 대여이력확인 > 재고확인 > 결제
+    * 대여 가능 기간, 그에 따른 대여 비용은 사전에 정의되어있음
+    * 관리자확인을 대신하는 Staff Table
+  * New
+    * 특정 폴더에 로그와 psycopg2.connect 정보를 저장하는(이후 정보) ini 파일 생성
+      * 실행시 특정 폴더에 정보 ini 파일이 없는 경우 로그인 Window 실행 전 psycopg2.connect 정보를 입력하는 Window 실행하고 저장 > (Host, User, ...)
+      * 정보 ini 파일이 있는경우 바로 로그인 Window 실행 > (Staff Table)
+    * 대여 정의 모듈에서 현재 대여 중인 dvd 의 경우 '이미 대여중인 dvd입니다.' 문구 출력 > 연체료, 대여료, 장바구니 초기화하여 결제 불가능하게 설정
+    * Title Search Window 추가
+      * Columns (Title , All Count , Rent Count , Rental available Count)
+      * Search Window에 검색어 없이 검색하면 전체 목록이 출력
+      * Title Name 일부를 검색하면 해당하는 목록이 출력
+      * film table > fulltext column 사용
+    * DB date 값 최신화 필요 (rental date 2006-02-14 / last return date 2005-09-02 |  + interval '19 year 11 month')
+    * Log_area / tkinter GUI Change
+      * [Flet](https://github.com/flet-dev/flet)
+    * Rank Window > (현재 시간 기준 Week Rank, Month Rank, Year Rank) 추가
+      * Columns (Rank , Title , Description (설명), Rating (관람등급), category(장르)(film > film_category > category Table)
 
 ## Workflow
 
