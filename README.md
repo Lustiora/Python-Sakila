@@ -1,4 +1,4 @@
-# Python-Sakila-Manager
+# Python-Sakila
 > Sakila DB > Read POS (Point of Sales) Simulator
 
 ## Future Improvements
