@@ -9,6 +9,7 @@ from window import set_focus_force
 import os
 import configparser
 import hashlib # 해시값 Encoding
+import base64
 # ---------------------------------------------------------
 # Variable
 # ---------------------------------------------------------
@@ -62,12 +63,16 @@ def check_login_process(event = None):
         login_host = config['DB Connect']['host']
         login_port = config['DB Connect']['port']
         login_id = config['DB Connect']['user']
-        login_pw = config['DB Connect']['password']
+        # -- Password Base64 Decode --
+        encrypted_pw = config['DB Connect']['password']  # Encode Text Call
+        pw_bytes = base64.b64decode(encrypted_pw)  # base64.b64decode Decode
+        decrypted_pw = pw_bytes.decode('utf-8')  # utf-8 Decode
+        # --
         conn = psycopg2.connect(dbname=login_db,
                                         host=login_host, # Default : localhost
                                         port=login_port, # Default : 5432
                                         user=login_id,
-                                        password=login_pw)
+                                        password=decrypted_pw)
         print("DB Connected")
         # -- Staff Login --
         cursor = conn.cursor()
@@ -93,9 +98,9 @@ def check_login_process(event = None):
             else:  # 쿼리값 미존재시
                 print(f"Login Failed | Count (3) : {count}")
                 messagebox.showinfo("Staff Login", f"Connect Failed\nChance (3) : {count}")
+        except Exception as e:
+            print(f"error : {e}")
             if count == 0:
                 print(f"Login Failed")
                 messagebox.showinfo("Staff Login", "Please Contact the Administrator\nPhone : 010-1234-5678")
                 login.destroy()
-        except Exception as e:
-            print(f"error : {e}")
