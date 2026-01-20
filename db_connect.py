@@ -57,7 +57,6 @@ def load_config():
             encrypted_pw = config['DB Connect']['password'] # Encode Text Call
             pw_bytes = base64.b64decode(encrypted_pw) # base64.b64decode Decode
             decrypted_pw = pw_bytes.decode('utf-8') # utf-8 Decode
-            # --
             db_pw.delete(0, tkinter.END)
             db_pw.insert(0, decrypted_pw) # Decode utf-8 Password
         except Exception as e:
