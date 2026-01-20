@@ -8,7 +8,6 @@ from window import center_window
 from window import set_focus_force
 import os
 import configparser
-import hashlib # 해시값 Encoding
 import base64
 # ---------------------------------------------------------
 # Variable
