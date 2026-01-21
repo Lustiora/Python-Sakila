@@ -212,6 +212,7 @@
 * **2026-01-21**
   1. Main Window Menubar Create
   2. Sub Window Frame 구현중
+  3. Status Bar 구현중 (DB 접속상태 체크)
 
 <details>
 <summary>Old Workflow</summary>
