@@ -51,6 +51,7 @@ def staff_login_gui():
 def check_login_process(event = None):
     global current_login_data
     global count
+    global login
     # -- Load Config --
     appdata = os.getenv("APPDATA")
     config_dir = os.path.join(appdata, "sakila", "db")
@@ -95,8 +96,8 @@ def check_login_process(event = None):
             if user_data:  # 쿼리값 존재시
                 print(f"ID : {user_data[0]} | PW : {user_data[1]}")
                 messagebox.showinfo("Staff Login", "Connected")
-                main_check_login_process()
                 login.destroy()
+                main_check_login_process()
             else:  # 쿼리값 미존재시
                 print(f"Login Failed | Count (3) : {count}")
                 messagebox.showinfo("Staff Login", f"Connect Failed\nChance (3) : {count}")

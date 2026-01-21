@@ -21,17 +21,96 @@ current_login_data = None
 def run_main():
     main = tkinter.Tk()
     main.title("Sakila")
-    center_window(main, 1024, 768, min_size=(1024,768))
+    center_window(main, 1024, 768, min_size=(1024,768))# -- DB 유령 연결 방지 --
+    def on_closing():
+        if messagebox.askokcancel("Quit", "Exit?"):
+            print("Sakila Exit")
+            # conn.close()  # DB 연결 종료
+            main.destroy()
+    main.protocol("WM_DELETE_WINDOW", on_closing)  # 메인 윈도우의 닫기 프로토콜에 연결
     # ---------------------------------------------------------
     # Main Window GUI
     # ---------------------------------------------------------
-    # tkinter.LabelFrame(main)
+    # -- Menubar Start --
+    menubar = tkinter.Menu(main)
+    # -- Menubar 1 --
+    menu1 = tkinter.Menu(menubar, tearoff=0) # tearoff : 하위 메뉴 사용시 활성화
+    menu1.add_command(label="상태")
+    menu1.add_separator() # 구분선
+    menu1.add_command(label="종료", command=on_closing)
+    menubar.add_cascade(label="메뉴", menu=menu1)
+    # -- Menubar 2 --
+    menu2 = tkinter.Menu(menubar, tearoff=0)
+    menu2.add_command(label="고객")
+    menu2.add_separator()
+    menu2.add_command(label="재고")
+    menu2.add_separator()
+    menu2.add_command(label="영화")
+    menu2.add_separator()
+    menu2.add_command(label="대여")
+    menu2.add_separator()
+    menu2.add_command(label="결제")
+    menubar.add_cascade(label="조회", menu=menu2)
+    # -- Menubar 3 --
+    menu3 = tkinter.Menu(menubar, tearoff=0)
+    menu3.add_command(label="고객")
+    menu3.add_separator()
+    menu3.add_command(label="재고")
+    menu3.add_separator()
+    menu3.add_command(label="영화")
+    menu3.add_separator()
+    menu3.add_command(label="대여")
+    menu3.add_separator()
+    menu3.add_command(label="결제")
+    menubar.add_cascade(label="변경", menu=menu3)
+    # -- Menubar 4 --
+    menu4 = tkinter.Menu(menubar, tearoff=0)
+    menu4.add_command(label="고객")
+    menu4.add_separator()
+    menu4.add_command(label="재고")
+    menu4.add_separator()
+    menu4.add_command(label="영화")
+    menu4.add_separator()
+    menu4.add_command(label="대여")
+    menu4.add_separator()
+    menu4.add_command(label="결제")
+    menubar.add_cascade(label="삭제", menu=menu4)
+    # -- Menubar 5 --
+    menu5 = tkinter.Menu(menubar, tearoff=0)
+    menu5.add_command(label="고객")
+    menu5.add_separator()
+    menu5.add_command(label="재고")
+    menu5.add_separator()
+    menu5.add_command(label="영화")
+    menu5.add_separator()
+    menu5.add_command(label="배우")
+    menu5.add_separator()
+    menu5.add_command(label="장르")
+    menubar.add_cascade(label="추가", menu=menu5)
+    # -- Menubar 6 --
+    menu6 = tkinter.Menu(menubar, tearoff=0)
+    menu6.add_command(label="대여 / 반납")
+    menu6.add_separator()
+    menu6.add_command(label="대여 순위")
+    menubar.add_cascade(label="통계", menu=menu6)
+    # -- Menubar 7 --
+    menu7 = tkinter.Menu(menubar, tearoff=0)
+    menu7.add_command(label="직원")
+    menubar.add_cascade(label="관리", menu=menu7)
+    # -- Menubar End --
+    main.config(menu=menubar)
+    def main_focus_force():
+        main.lift()
+        main.attributes('-topmost', True)
+        main.attributes('-topmost', False)
+        main.focus_force() # 강제 포커스 (Entry or window 지정가능)
+    main.after(200, main_focus_force)
+    main.mainloop()
 # ---------------------------------------------------------
 # Check Login Process Module
 # ---------------------------------------------------------
 def main_check_login_process(event = None):
     global current_login_data
-    global count
     # -- Load Config --
     appdata = os.getenv("APPDATA")
     config_dir = os.path.join(appdata, "sakila", "db")
