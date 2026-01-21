@@ -122,6 +122,7 @@
         - 조회 & 변경 & 삭제
             - 고객 (Customer-Table)
             - 재고 (Inventory-Table)
+            - 영화 (Film-Table) (C: fulltext)
             - 대여 (Rental-Table)
             - 결제 (Payment-Table)
         - 추가
