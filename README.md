@@ -209,6 +209,16 @@
 
 ## Workflow
 
+* **2026-01-22**
+  1. Status Bar 구현 (DB 접속상태 5s 체크)
+  2. Linux 호환 설정
+  3. pyinstaller > Package Compile `pyinstaller -F -w -n Sakila_Basic_Logic_(2.3) db_connect.py`
+  Linux 실행 **성공** 확장자 **X**
+  Window 별도 Package Compile 필요 (pyinstaller Cross-Compile 지원하지 않음)
+
+<details>
+<summary>Old Workflow</summary>
+
 * **2026-01-21**
   1. Main Window Menubar Create
   2. Sub Window Frame 구현중
@@ -221,9 +231,6 @@
       else: appdata = os.path.expanduser("~/.config") # Linux의 경우
       ```
   6. Window Array Middle Debug
-
-<details>
-<summary>Old Workflow</summary>
 
 * **2026-01-20**
   1. DB Connect Debug
