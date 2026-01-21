@@ -169,7 +169,7 @@ def run_db_connect():
     db.after(10, lambda: center_window_delayed(db, 300, 240))
 
     db_db.focus_set() # DB Name Focus
-
+    # db.deiconify() # Window OS 동작 이상 시 주석 해제
     db.mainloop()
 
 if __name__ == "__main__":

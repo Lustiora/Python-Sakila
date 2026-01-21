@@ -441,7 +441,7 @@ def run_main(conn, login_db, login_host, login_port):
             main.after(5000, lambda: connect_test(conn))
     # ---------------------------------------------------------
     connect_test(conn)
-
+    # main.deiconify() # Window OS 동작 이상 시 주석 해제
     main.after(10, lambda: center_window_delayed(main, 1024, 768))
     main.mainloop()
 # ---------------------------------------------------------

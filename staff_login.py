@@ -46,6 +46,7 @@ def staff_login_gui():
     login.grid_columnconfigure(0, weight=1) # ([열],[배당 비율])
     login.grid_columnconfigure(1, weight=1)
 
+    # login.deiconify() # Window OS 동작 이상 시 주석 해제
     login.after(10, lambda: center_window_delayed(login, 260, 150))
     login.after(200, set_focus_force, login, username) # set_focus_force(login, user_id)
     login.mainloop() # root(Window)를 지속적으로 반복 실행 (종료방지)
