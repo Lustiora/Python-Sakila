@@ -214,6 +214,13 @@
   2. Sub Window Frame 구현중
   3. Status Bar 구현중 (DB 접속상태 체크)
   4. DB Connect 5s Test, Disconnect > db_connect.py link Logic 추가
+  5. Linux 호환 설정 추가 <br>
+      ```bash
+      import sys <br>
+      if sys.platform == "win32": appdata = os.getenv("APPDATA") # Window의 경우<br>
+      else: appdata = os.path.expanduser("~/.config") # Linux의 경우
+      ```
+  6. Window Array Middle Debug
 
 <details>
 <summary>Old Workflow</summary>
