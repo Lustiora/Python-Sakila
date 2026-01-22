@@ -113,11 +113,19 @@
 
 ### Window
 
-<img width="1026" height="820" alt="스크린샷 2026-01-22 172434" src="https://github.com/user-attachments/assets/04d5c636-2aa7-487c-b883-01ac260df8c9" />
 
 1. [x] DB Connect Window `1`
+
+    <img width="302" height="272" alt="스크린샷 2026-01-22 172642" src="https://github.com/user-attachments/assets/91d2e611-533d-43be-9b15-11bd2f6412e3" />
+
 2. [x] Staff Login Window `2`
+    
+    <img width="262" height="182" alt="스크린샷 2026-01-22 172651" src="https://github.com/user-attachments/assets/ccd62212-58c7-4ef2-98a1-cb745d72594d" />
+    
 3. [x] Main Window
+    
+    <img width="1026" height="820" alt="스크린샷 2026-01-22 172434" src="https://github.com/user-attachments/assets/04d5c636-2aa7-487c-b883-01ac260df8c9" />
+
     - Menubar
         - 메뉴
             - 상태 (DB 연결, 직원 정보)
