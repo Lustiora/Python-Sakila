@@ -212,9 +212,13 @@
 * **2026-01-22**
   1. Status Bar 구현 (DB 접속상태 5s 체크)
   2. Linux 호환 설정 DB Disconnect Restart Debug
-  3. pyinstaller > Package Compile `pyinstaller -F -w -n Sakila_Basic_Logic_2_3 db_connect.py`<br>
-  Linux 실행 **성공** 확장자 **X**<br>
+  3. pyinstaller > Package Compile 
+  ```bash
+  pyinstaller -F -w -n Sakila_Basic_Logic_2_3 db_connect.py
+  
+  Linux 실행 성공
   Window 별도 Package Compile 필요 (pyinstaller Cross-Compile 지원하지 않음)
+  ````
   4. Linux에서 재시작에 성공하고 Windows에서 실패하는 현상 debug (분기 추가)
   5. db_connect.py > config.ini 파일 유무에 따른 동작 로직 변경 (파일 존재시 바로 접속 시도)
   6. Windows EXE Compile Restart Error Debug > 파일 자체를 재실행 하는 방식으로 전환<br>
@@ -222,7 +226,10 @@
   # 원인
   Windows EXE 실행 시 임시폴더를 생성 후 해당 위치에 Compile된 EXE를 실행하는 방식이었으나
   Restart Logic 실행 시
-  Windows는 프로그램이 종료되었다고 생각하여 임시폴더를 삭제하고 환경변수, 임시폴더위치는 상속되어 실행되지 않고 에러 발생
+  Windows는 프로그램이 종료되었다고 생각하여 임시폴더를 삭제하고 환경변수, 임시폴더위치는 상속되어
+  실행되지 않고 에러 발생
+  
+  Linux Compile Test 필요
   ```
   
 <details>
