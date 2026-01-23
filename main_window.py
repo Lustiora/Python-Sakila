@@ -41,14 +41,21 @@ count = 3
 current_login_data = None
 current_status = None
 check_status = []
+staff_user = None
 # ---------------------------------------------------------
 # Main Window Module
 # ---------------------------------------------------------
+def staff_user_id(user_id):
+    global staff_user
+    staff_user = user_id
+    return staff_user
+
 def run_main(conn, login_db, login_host, login_port):
     # -- Variable --
     global current_login_data
     global current_status
     global check_status
+    global staff_user
     current_login_data = None
     current_status = None
     # -- Main --
@@ -95,17 +102,20 @@ def run_main(conn, login_db, login_host, login_port):
         tkinter.Label(content_frame, text="Database :", bg="white").grid(row=0, column=0, pady=5, sticky="e")
         tkinter.Label(content_frame, text="Host :", bg="white").grid(row=1, column=0, pady=5, sticky="e")
         tkinter.Label(content_frame, text="Port :", bg="white").grid(row=2, column=0, pady=5, sticky="e")
-        tkinter.Label(content_frame, text="Connect Status :", bg="white").grid(row=3, column=0, pady=5, sticky="e")
+        tkinter.Label(content_frame, text="Login Staff :", bg="white").grid(row=3, column=0, pady=5, sticky="e")
+        tkinter.Label(content_frame, text="Connect Status :", bg="white").grid(row=4, column=0, pady=5, sticky="e")
         tkinter.Label(content_frame, text=login_db, bg="white").grid(row=0, column=1, pady=5, sticky="w")
         tkinter.Label(content_frame, text=login_host, bg="white").grid(row=1, column=1, pady=5, sticky="w")
         tkinter.Label(content_frame, text=login_port, bg="white").grid(row=2, column=1, pady=5, sticky="w")
+        tkinter.Label(content_frame, text=staff_user_id(staff_user), bg="white").grid(row=3, column=1, pady=5, sticky="w")
+
         check_status = tkinter.Label(content_frame, text="Check_Status", fg="white", bg="white")
-        check_status.grid(row=3, column=1, pady=5, sticky="w")
+        check_status.grid(row=4, column=1, pady=5, sticky="w")
         def check_db(conn, check_status):
             try:
                 with conn.cursor() as cursor:
                     cursor.execute("select 1")
-                    print("DB Connect Check : Connected")
+                    # print("DB Connect Check : Connected")
                     check_status.config(text="Connected", fg="green")
             except Exception as e:
                 print(e)

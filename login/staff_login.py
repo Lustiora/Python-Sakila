@@ -20,6 +20,7 @@ current_login_data = None
 username = None
 password = None
 login = None
+user_data = []
 # ---------------------------------------------------------
 # Staff Login GUI
 # ---------------------------------------------------------
@@ -56,6 +57,8 @@ def check_login_process(event = None):
     global current_login_data
     global count
     global login
+    global user_data
+    user_data = []
     # -- Load Config --
     if sys.platform == "win32":
         appdata = os.getenv("APPDATA")  # %appdata% 경로 변환
@@ -103,8 +106,11 @@ def check_login_process(event = None):
             if user_data:  # 쿼리값 존재시
                 print(f"ID : {user_data[0]} | PW : {user_data[1]}")
                 login.destroy()
+                from main_window import staff_user_id
+                staff_user_id(user_data[0])
                 from main_window import main_check_login_process
                 main_check_login_process()
+
             else:  # 쿼리값 미존재시
                 if count <= 0:
                     print(f"Login Failed")
