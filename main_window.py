@@ -19,6 +19,21 @@ from sub_frame_search import (search_customer_frame,
                               search_film_frame,
                               search_rental_frame,
                               search_payment_frame)
+from sub_frame_change import (change_customer_frame,
+                              change_inventory_frame,
+                              change_film_frame,
+                              change_rental_frame,
+                              change_payment_frame)
+from sub_frame_delete import (delete_customer_frame,
+                              delete_inventory_frame,
+                              delete_film_frame,
+                              delete_rental_frame,
+                              delete_payment_frame)
+from sub_frame_add import (add_customer_frame,
+                           add_inventory_frame,
+                           add_film_frame,
+                           add_actor_frame,
+                           add_category_frame)
 # ---------------------------------------------------------
 # Variable
 # ---------------------------------------------------------
@@ -119,7 +134,8 @@ def run_main(conn, login_db, login_host, login_port):
     menubar.add_cascade(label="메뉴", menu=menu1)
     # -- Menubar 2 --
     menu2 = tkinter.Menu(menubar, tearoff=0)
-    menu2.add_command(label="고객", command=lambda :search_customer_frame(main)) # lambda : 실행 대기 필요시 사용
+    menu2.add_command(label="고객", command=lambda :search_customer_frame(main))
+                                         # lambda : 실행 대기 필요시 사용 (즉시 실행 방지)
     menu2.add_separator()
     menu2.add_command(label="재고", command=lambda :search_inventory_frame(main))
     menu2.add_separator()
@@ -131,39 +147,39 @@ def run_main(conn, login_db, login_host, login_port):
     menubar.add_cascade(label="조회", menu=menu2)
     # -- Menubar 3 --
     menu3 = tkinter.Menu(menubar, tearoff=0)
-    menu3.add_command(label="고객")
+    menu3.add_command(label="고객", command=lambda :change_customer_frame(main))
     menu3.add_separator()
-    menu3.add_command(label="재고")
+    menu3.add_command(label="재고", command=lambda :change_inventory_frame(main))
     menu3.add_separator()
-    menu3.add_command(label="영화")
+    menu3.add_command(label="영화", command=lambda :change_film_frame(main))
     menu3.add_separator()
-    menu3.add_command(label="대여")
+    menu3.add_command(label="대여", command=lambda :change_rental_frame(main))
     menu3.add_separator()
-    menu3.add_command(label="결제")
+    menu3.add_command(label="결제", command=lambda :change_payment_frame(main))
     menubar.add_cascade(label="변경", menu=menu3)
     # -- Menubar 4 --
     menu4 = tkinter.Menu(menubar, tearoff=0)
-    menu4.add_command(label="고객")
+    menu4.add_command(label="고객", command=lambda :delete_customer_frame(main))
     menu4.add_separator()
-    menu4.add_command(label="재고")
+    menu4.add_command(label="재고", command=lambda :delete_inventory_frame(main))
     menu4.add_separator()
-    menu4.add_command(label="영화")
+    menu4.add_command(label="영화", command=lambda :delete_film_frame(main))
     menu4.add_separator()
-    menu4.add_command(label="대여")
+    menu4.add_command(label="대여", command=lambda :delete_rental_frame(main))
     menu4.add_separator()
-    menu4.add_command(label="결제")
+    menu4.add_command(label="결제", command=lambda :delete_payment_frame(main))
     menubar.add_cascade(label="삭제", menu=menu4)
     # -- Menubar 5 --
     menu5 = tkinter.Menu(menubar, tearoff=0)
-    menu5.add_command(label="고객")
+    menu5.add_command(label="고객", command=lambda :add_customer_frame(main))
     menu5.add_separator()
-    menu5.add_command(label="재고")
+    menu5.add_command(label="재고", command=lambda :add_inventory_frame(main))
     menu5.add_separator()
-    menu5.add_command(label="영화")
+    menu5.add_command(label="영화", command=lambda :add_film_frame(main))
     menu5.add_separator()
-    menu5.add_command(label="배우")
+    menu5.add_command(label="배우", command=lambda :add_actor_frame(main))
     menu5.add_separator()
-    menu5.add_command(label="장르")
+    menu5.add_command(label="장르", command=lambda :add_category_frame(main))
     menubar.add_cascade(label="추가", menu=menu5)
     # -- Menubar 6 --
     menu6 = tkinter.Menu(menubar, tearoff=0)
