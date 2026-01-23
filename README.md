@@ -223,6 +223,7 @@
 * **2026-01-23**
   1. Menubar Module 별도 py 분리 (Sub Frame search, change, delete, add)
   2. Window Module start_move, on_drag 이전
+  3. Menubar Status_Frame Login Staff 표시 staff_login > main_window
 
 <details>
 <summary>Old Workflow</summary>
