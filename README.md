@@ -24,7 +24,7 @@
         - 불일치 >> Count **-1** Print _Login Failed / Chance(Count)_
             - Count == **0** Print _Please Contact the Administrator / Phone : 010-1234-5678_ _End_
     <br>
-    <img width="831" height="238" alt="Screenshot_20260124_142020" src="https://github.com/user-attachments/assets/98578567-67f3-49d1-b651-4901f262644b" />
+    <img width="782" height="214" alt="스크린샷 2026-01-20 170512" src="https://github.com/user-attachments/assets/956b66f3-7f8f-4fae-9522-c4fc8bfb394e" />
 
 ### 2. Customer Check / Return / Rental / Calculation Logic
 
@@ -120,8 +120,9 @@
     <img width="302" height="272" alt="스크린샷 2026-01-22 172642" src="https://github.com/user-attachments/assets/91d2e611-533d-43be-9b15-11bd2f6412e3" />
 
 2. [x] Staff Login Window `2`
-    
-    <img width="262" height="182" alt="스크린샷 2026-01-22 172651" src="https://github.com/user-attachments/assets/ccd62212-58c7-4ef2-98a1-cb745d72594d" />
+    Left <Tkinter> -- Middle <Custom Tkinter> & Dark Theme -- Right <Custom Tkinter> & Basic Theme
+
+    <img width="831" height="238" alt="Screenshot_20260124_142020" src="https://github.com/user-attachments/assets/98578567-67f3-49d1-b651-4901f262644b" />
     
 3. [x] Main Window
     
