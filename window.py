@@ -40,9 +40,9 @@ def center_window(window, width, height, resizable=None, min_size=None):
     if min_size is not None:
         window.minsize(min_size[0], min_size[1])
 
-def center_window_delayed(window, width, height):
+def center_window_delayed(window, width, height, resizable=None):
     # 기존 center_window 로직 실행 (screeninfo 사용하는 버전)
-    center_window(window, width, height, resizable=None)
+    center_window(window, width, height, resizable=resizable)
 
     # 위치를 잡은 뒤에 창을 보여줌 (deiconify)
     window.deiconify()
@@ -151,4 +151,4 @@ class Modern_Mono:
     status_bar = "#cfd8dc"
     status_text = "#37474f"
     
-Colors = Dark_Pro
+Colors = Corporate_Blue

@@ -108,14 +108,13 @@ def auto_login_start():
         staff_login_gui()
 
     except Exception as e:
-        print(f"Auto-Login Failed: {e}")
-        messagebox.showerror("Auto-Login Failed",f"{e}")
+        print(f"Auto-Login Failed:\n{e}")
+        messagebox.showerror("Connection Failed",f"{e}")
         # 연결 실패 시 -> 설정창(run_db_connect) 실행
         run_db_connect()
 # ---------------------------------------------------------
 # Database Connect Module (Button Event)
 # ---------------------------------------------------------
-count = 3
 db = []
 db_db = []
 db_host = []
@@ -123,7 +122,6 @@ db_port = []
 db_id = []
 db_pw = []
 def db_connect_event(event=None):
-    global count
     global db, db_db, db_host, db_port, db_id, db_pw
     login_db = db_db.get()
     login_host = db_host.get()
@@ -131,7 +129,6 @@ def db_connect_event(event=None):
     login_id = db_id.get()
     login_pw = db_pw.get()
     print(f"Connecting to {login_host}...")
-    count = count - 1
     try:
         conn = psycopg2.connect(dbname=login_db,
                                 host=login_host,
@@ -144,12 +141,8 @@ def db_connect_event(event=None):
         from staff_login import staff_login_gui
         staff_login_gui()
     except Exception as e:
-        print(f"Connection Failed: {e}")
-        if count > 0:
-            messagebox.showerror("DB Connect", f"Not Connected\nChance(3) : {count}")
-        else:
-            messagebox.showerror("DB Connect", "Please Contact Administrator")
-            db.destroy()
+        print(f"Connection Failed:\n{e}")
+        messagebox.showerror("Connection Failed",f"{e}")
 # ---------------------------------------------------------
 # DB Connect GUI (Setup Screen)
 # ---------------------------------------------------------
@@ -159,7 +152,6 @@ def run_db_connect():
     db.withdraw()
     db.title("DB Connect")
     db.configure(fg_color=Colors.background)
-    center_window(db, 300, 240, resizable=False)
 
     # UI Components
     customtkinter.CTkLabel(db, text="DB Name", fg_color=Colors.background, text_color=Colors.text).grid(row=1, column=0, pady=5, padx=5, sticky="e")
@@ -197,7 +189,7 @@ def run_db_connect():
 
     load_config_to_gui()  # 기존 저장된 값 불러오기
 
-    db.after(10, lambda: center_window_delayed(db, 300, 240))
+    db.after(10, lambda: center_window_delayed(db, 300, 240, resizable=False))
     db_db.focus_set()
     db.mainloop()
 # ---------------------------------------------------------

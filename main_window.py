@@ -114,7 +114,7 @@ def run_main(conn, login_db, login_host, login_port):
         close_btn = customtkinter.CTkLabel(title_bar, text=" X ",
                                            fg_color=Colors.alert, text_color="white",
                                            width=30, height=30)
-        close_btn.pack(side="right")
+        close_btn.pack(side="right", padx=1)
         close_btn.bind("<Button-1>", close_status_frame)
 
         # -- Body --
@@ -128,15 +128,11 @@ def run_main(conn, login_db, login_host, login_port):
         labels = ["Database :", "Host :", "Port :", "Store :", "Login Staff :", "Connect Status :"]
         for i, text in enumerate(labels):
             customtkinter.CTkLabel(content_frame, text=text,
-                                   fg_color=Colors.background, text_color=Colors.text).grid(row=i, column=0, pady=5,
-                                                                                            sticky="e")
-
+                                   fg_color=Colors.background, text_color=Colors.text).grid(row=i, column=0, pady=5, sticky="e")
         values = [login_db, login_host, login_port, staff_store, staff_user]
         for i, val in enumerate(values):
             customtkinter.CTkLabel(content_frame, text=val,
-                                   fg_color=Colors.background, text_color=Colors.text).grid(row=i, column=1, pady=5,
-                                                                                            padx=10, sticky="w")
-
+                                   fg_color=Colors.background, text_color=Colors.text).grid(row=i, column=1, pady=5, padx=10, sticky="w")
         check_status = customtkinter.CTkLabel(content_frame, text="Check_Status",
                                               text_color=Colors.text, fg_color=Colors.background)
         check_status.grid(row=5, column=1, pady=5, padx=10, sticky="w")
