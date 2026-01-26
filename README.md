@@ -8,12 +8,13 @@
 1. [x] **DB 연결정보를 확인**
     - 연결정보가 저장된 INI File 유무 확인
     - 화이트 리스트 [...\PostgreSQL\18\data\postgresql.conf, pg_hba.conf](https://github.com/Lustiora/Python-Sakila/wiki/PostgresSQL-Server-White-List)
-        - DB Connect Count = **3**
+        - ~DB Connect Count = **3**~
         - 1-1. 해당 정보로 연결시도
-            - 일치 print _DB Connect_ > `2`
-            - 불일치 >> Count **-1** Print _Not Connected_
-                - Count == **0** Print _Please Contact the Administrator / Phone : 010-1234-5678_ _End_
-        
+            - ~일치 print _DB Connect_ > `2`~
+            - ~불일치 >> Count **-1** Print _Not Connected_~
+                - ~Count == **0** Print _Please Contact the Administrator / Phone : 010-1234-5678_ _End_~
+                - Count 제거 / 에러코드 출력으로도 충분
+        <br>
         <img width="674" height="257" alt="스크린샷 2026-01-20 170736" src="https://github.com/user-attachments/assets/1e3ad08c-defb-48db-92ae-0b0bb70a7929" />
 
 2. [x] **직원 ID를 확인 (Staff-Table)**
@@ -22,7 +23,7 @@
         - 일치 >> `DB Access`
         - 불일치 >> Count **-1** Print _Login Failed / Chance(Count)_
             - Count == **0** Print _Please Contact the Administrator / Phone : 010-1234-5678_ _End_
-    
+    <br>
     <img width="782" height="214" alt="스크린샷 2026-01-20 170512" src="https://github.com/user-attachments/assets/956b66f3-7f8f-4fae-9522-c4fc8bfb394e" />
 
 ### 2. Customer Check / Return / Rental / Calculation Logic
@@ -112,9 +113,26 @@
     - _End_
 
 ### Window
+
+
 1. [x] DB Connect Window `1`
+
+    <img width="302" height="272" alt="스크린샷 2026-01-22 172642" src="https://github.com/user-attachments/assets/91d2e611-533d-43be-9b15-11bd2f6412e3" />
+
 2. [x] Staff Login Window `2`
+
+    -- Left `Tkinter` -- Middle `Custom Tkinter` & Dark Theme -- Right `Custom Tkinter` & Basic Theme --
+
+    <img width="831" height="238" alt="Screenshot_20260124_142020" src="https://github.com/user-attachments/assets/98578567-67f3-49d1-b651-4901f262644b" />
+    
 3. [x] Main Window
+    
+    `Tkinter`
+    <img width="1026" height="820" alt="스크린샷 2026-01-22 172434" src="https://github.com/user-attachments/assets/04d5c636-2aa7-487c-b883-01ac260df8c9" />
+    
+    `Custom Tkinter`
+    <img width="1154" height="958" alt="Screenshot_20260124_145245" src="https://github.com/user-attachments/assets/3bdc3d49-7658-4f5d-a095-0d861697b2b0" />
+
     - Menubar
         - 메뉴
             - 상태 (DB 연결, 직원 정보)
@@ -135,12 +153,15 @@
         - 관리
             - 직원 (Staff-Table)
 
-<details>
-<summary>Old Basic Logic 1.0</summary>
+### Old Basic Logic 1.0
 
+<details>
+<summary>...</summary>
+<br>
 <img width="271" height="141" alt="스크린샷 2026-01-20 165959" src="https://github.com/user-attachments/assets/2b732a9f-7eb9-4e53-b514-540f517ac469" />
 
 <img width="707" height="437" alt="스크린샷 2026-01-20 170017" src="https://github.com/user-attachments/assets/c2ea61f9-b06a-44d9-9592-cf3a0bfa5a8e" />
+
 1. **사용자 ID를 확인**
    - 1-1. 대여중/연체중인 DVD가 존재하는 경우 > **3-2**
 
@@ -186,9 +207,9 @@
 * Sakila DB를 재확인한 결과 상상이상으로 많은 데이터가 정리되어있음을 확인하여 **새로운 Logic의 필요성을 확인**
   * Old
     * 관리자확인 > 고객확인 > 대여이력확인 > 재고확인 > 결제
+  * New
     * 대여 가능 기간, 그에 따른 대여 비용은 사전에 정의되어있음
     * 관리자확인을 대신하는 Staff Table
-  * New
     * 특정 폴더에 로그와 psycopg2.connect 정보를 저장하는(이후 정보) ini 파일 생성
       * 실행시 특정 폴더에 정보 ini 파일이 없는 경우 로그인 Window 실행 전 psycopg2.connect 정보를 입력하는 Window 실행하고 저장 > (Host, User, ...)
       * 정보 ini 파일이 있는경우 바로 로그인 Window 실행 > (Staff Table)
@@ -206,20 +227,32 @@
 
 ## Workflow
 
-* **2026-01-23**
-  1. Menubar Module 별도 py 분리 (Sub Frame search, change, delete, add)
-  2. Window Module start_move, on_drag 이전
-  3. Menubar Status_Frame Login Staff 표시 staff_login > main_window
+* **2026-01-26**
+  1. 기존 tkinter 구조에서 customtkinter로 변환하였으나 GUI 부분에서 아쉬운점이 많아 파기
+  2. flet(0.28.3)을 사용하여 웹, 앱 호환성 해결을 위한 변환작업 진행중 
+  <br>(0.80.3 >> Script End Monitor Brightness "0" Issue)
+  <br>https://flet-controls-gallery.fly.dev/
 
 <details>
 <summary>Old Workflow</summary>
 
+* **2026-01-23**
+  1. Menubar Module 별도 py 분리 (Sub Frame search, change, delete, add)
+  2. Window Module start_move, on_drag 이전
+  3. Menubar Status_Frame Login Staff 표시 staff_login > main_window
+  4. 차후 테마 적용을 위한 Theme 생성
+  5. tkinter > customtkinter 변환
+
 * **2026-01-22**
   1. Status Bar 구현 (DB 접속상태 5s 체크)
   2. Linux 호환 설정 DB Disconnect Restart Debug
-  3. pyinstaller > Package Compile `pyinstaller -F -w -n Sakila_Basic_Logic_2_3 db_connect.py`
-  Linux 실행 **성공** 확장자 **X**
+  3. pyinstaller > Package Compile 
+  ```bash
+  pyinstaller -F -w -n Sakila_Basic_Logic_2_3 db_connect.py
+  
+  Linux 실행 성공
   Window 별도 Package Compile 필요 (pyinstaller Cross-Compile 지원하지 않음)
+  ````
   4. Linux에서 재시작에 성공하고 Windows에서 실패하는 현상 debug (분기 추가)
   5. db_connect.py > config.ini 파일 유무에 따른 동작 로직 변경 (파일 존재시 바로 접속 시도)
   6. Windows EXE Compile Restart Error Debug > 파일 자체를 재실행 하는 방식으로 전환<br>
@@ -232,11 +265,7 @@
   
   Linux Compile Test >> Clear
   ```
-  7. Windows Sandbox Test >> **Clear**
-
-
-<details>
-<summary>Old Workflow</summary>
+  7. Windows Sandbox Test >> **Clear** 
 
 * **2026-01-21**
   1. Main Window Menubar Create
@@ -251,8 +280,14 @@
       ```
   6. Window Array Middle Debug
 
-<details>
-<summary>Old Workflow</summary>
+* **2026-01-20**
+  1. DB Connect Debug
+  2. DB Connect GUI > Staff Login GUI Connect
+  3. Main Window Create
+
+* **2026-01-19**
+  1. Basic Logic 2.0 설계
+  2. DB Connect GUI, INI File Create
 
 * **2026-01-16 (GUI)**
   1. DVD 목록 검색기능 + 결제 버튼 추가 / `GUI_test1.py`
@@ -281,7 +316,8 @@
   5. 데이터 오염 방지를 위해 DB 직접 저장 **Cancel**
 
 * **2026-01-13 (CLI)**
-  1. 존재하는 사용자인지 아닌지를 확인하며 미반납 이력을 확인 > customer / `CLI_test1.py`
-  2. 존재하는 영화 여부 확인 및 대여기간을 지정하여 대여기간에 따른 대여료 출력 > inventory , film / `CLI_test1.py`
+  1. Basic Logic 1.0 설계
+  2. 존재하는 사용자인지 아닌지를 확인하며 미반납 이력을 확인 > customer / `CLI_test1.py`
+  3. 존재하는 영화 여부 확인 및 대여기간을 지정하여 대여기간에 따른 대여료 출력 > inventory , film / `CLI_test1.py`
 
 </details>
