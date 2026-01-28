@@ -78,6 +78,7 @@ def load_config_to_gui():
 def auto_login_start(page: flet.Page):
     page.clean()
     page.title = "DB Connect"  # 창 타이틀
+    page.bgcolor = flet.Colors.BLUE_GREY_50
     page.vertical_alignment = flet.MainAxisAlignment.CENTER  # 세로 중앙
     page.horizontal_alignment = flet.CrossAxisAlignment.CENTER  # 가로 중앙
     page.window.resizable = False
@@ -247,4 +248,4 @@ def run_db_connect(page: flet.Page):
     # -- Update --
     page.update() # 모듈의 작성된 코드를 적용
 # -- Run --
-flet.app(target=auto_login_start) # 모듈 실행을 정의
+flet.app(target=auto_login_start, assets_dir="assets") # 모듈 실행을 정의
