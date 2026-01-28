@@ -73,7 +73,7 @@ def load_config_to_gui():
             port.insert(0, config['DB Connect']['port'])
             username.insert(0, config['DB Connect']['user'])
         except Exception as e:
-            print(f"Error : {e}")
+            print(f"[load] Error : {e}")
 # -- Auto Login Logic (Launcher) --
 def auto_login_start(page: flet.Page):
     page.clean()

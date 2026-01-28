@@ -4,8 +4,8 @@ from db_monitor import connect_test
 from nav_tile import nav
 # -- Variable --
 # -- Module --
-# def run_main(page: flet.Page, conn, login_db, login_host, login_port, staff_store, staff_user):
-def run_main(page: flet.Page): # test
+def run_main(page: flet.Page, conn, login_db, login_host, login_port, staff_store, staff_user):
+# def run_main(page: flet.Page): # test
     # -- Frame --
     page.clean()
     page.title = "Sakila"
@@ -21,8 +21,6 @@ def run_main(page: flet.Page): # test
     page.update()
     # -- Exit --
     page.window.prevent_close = True # X 이벤트 옵션 추가
-    def close_pop_open(e):
-        e.page.open(main_quit)
     def close_pop(e):
         e.page.close(main_quit)  # 팝업창 종료 명령어
     def close_main(e):
@@ -49,8 +47,8 @@ def run_main(page: flet.Page): # test
         bgcolor=flet.Colors.OUTLINE
     )
     # -- Main Area --
-    # ex_tile, basic_content = nav(page, login_db, login_host, login_port, staff_store, staff_user) # Return 값 변수 수거
-    ex_tile, basic_content = nav(page)  # test
+    ex_tile, basic_content = nav(page, login_db, login_host, login_port, staff_store, staff_user, conn) # Return 값 변수 수거
+    # ex_tile, basic_content = nav(page)  # test
     # -- Page --
     page.add(
         flet.Row([
@@ -61,8 +59,8 @@ def run_main(page: flet.Page): # test
                 ], expand=True, vertical_alignment=flet.CrossAxisAlignment.START
         )
     )
-    # connect_test(conn, con_status, page)
+    connect_test(conn, con_status, page)
     # -- Update --
     page.update()
 # -- Run Test --
-flet.app(target=run_main, assets_dir="assets") # test
+# flet.app(target=run_main, assets_dir="assets") # test

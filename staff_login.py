@@ -161,6 +161,6 @@ def check_login_process(e):
                     e.page.update()
                     # messagebox.showerror("Staff Login", f"Connect Failed\nChance (3) : {count}")
         except Exception as e:
-            print(f"error : {e}")
+            print(f"[staff_login] error : {e}")
 # -- Run Test --
 # flet.app(target=run_staff_login)
