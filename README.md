@@ -5,18 +5,23 @@
 * PostgreSQL
 * Python
 * Sakila Sample Database (MySQL)
-* Flet Library (Python)
+* Flet 0.28.3 Library (Python)
 * Windows 11
 * Arch Linux 
 
 ## Workflow
 
 * 예정 : 
+  * Search Inventory 모듈 (ID (Film Title 등), 동일한 Film Title의 inventory ID 및 정보, 대여상태)
   * 조회된 목록을 export 하는 기능 
   * 조회된 목록에서 선택을 하여 수정, 삭제 기능으로 연결
+  * c_status에 터미널 로그창을 추가하여 동작 상태를 출력하고 export하는 기능
+  * 쿼리문을 config에서 불러오는 방식으로 수정하여 쿼리문 수정이 가능하게 구성
+  * 돋보기 기능을 추가 window > Font <Class 방식으로 전환>
+  * 테마 기능 추가
 
 * **2026-01-29**
-  1. Search Customer 검색 모듈 분할
+  1. Search Customer 모듈 (ID, Name) 분할
   2. try, except > Error 구분 문구 추가
 
 <details>
