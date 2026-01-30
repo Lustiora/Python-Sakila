@@ -100,8 +100,8 @@ flet run -r ./main_window.py
 ## 📜 Development Log (Workflow)
 
 * **Latest Update: 2026-01-31**
-  1. 변수명, 함수명 가독성 개선
-        <details><summary>변경 내역</summary>
+  1. Improved variable and function names
+        <details><summary>Improvement History</summary>
         
         | 파일명 | Old | New | 비고 (역할) |
         | --- | --- | --- | --- |
