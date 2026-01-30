@@ -1,7 +1,7 @@
 # 📀 Sakila Store Management System
 
 **Python Flet**과 **PostgreSQL**을 활용하여 구축한 **DVD 대여점 관리 시스템**(**Store Management System**)입니다.<br>
-Sakila 샘플 데이터베이스를 기반으로 회원 관리, 재고 관리, 대여 및 반납 프로세스를 GUI로 구현했습니다.
+Sakila 샘플 데이터베이스를 기반으로 회원 관리, 재고 관리, 대여 및 반납 프로세스를 GUI로 구현중 입니다.
 
 ## 🛠 Tech Stack (Assets)
 
@@ -71,7 +71,8 @@ Sakila 샘플 데이터베이스를 기반으로 회원 관리, 재고 관리, �
 
 ## 🚀 Installation & Run (Hot Reload)
 
-개발 환경에서의 실행 방법입니다. `db_connect` 모듈은 Hot Reload를 지원하지 않습니다.
+개발 환경에서의 실행 방법.<br>
+`db_connect` 모듈 Hot Reload 불가.
 
 **Environment:**
 * Path: `~/Python-Sakila`
@@ -92,6 +93,7 @@ flet run -r ./main_window.py
 * [ ] **Console Log UI:** 시스템 동작 상태(Log)를 출력하는 터미널 윈도우 추가.
 * [ ] **Theme System:** 다크 모드/라이트 모드 테마 변경 기능.
 * [ ] **Auto-Reconnect:** 서버 연결 끊김 시 백그라운드 재연결 시도 로직.
+* [ ] **Config.ini Query Edit:** DB 연결 단계에서 검색 Query 입력기능 추가.
 
 ---
 
@@ -103,6 +105,7 @@ flet run -r ./main_window.py
 2. **Logic Update:** Basic Logic 2.1 사양서 현행화 작업 진행 중.
 
 <details><summary>📂 Past Development Log (Click to Expand)</summary>
+
 * **2026-01-29**
   1. Search Customer 모듈 분할 (ID, Name)
   2. 예외 처리 강화: `try-except` 구문 및 Error 구분 문구 추가
@@ -191,8 +194,9 @@ flet run -r ./main_window.py
   4. 전역 변수 데이터 수거 기능 추가
   5. PyInstaller EXE 생성 및 테스트 (**성공**)
   6. 구조 변경을 통한 동작 흐름 최적화 (`GUI_test2.py`)
+  
   <p>
-      <img width="707" height="437" alt="스크린샷 2026-01-20 170017" src="[https://github.com/user-attachments/assets/c2ea61f9-b06a-44d9-9592-cf3a0bfa5a8e](https://github.com/user-attachments/assets/c2ea61f9-b06a-44d9-9592-cf3a0bfa5a8e)" />
+  <img width="707" height="437" alt="스크린샷 2026-01-20 170017" src="[https://github.com/user-attachments/assets/c2ea61f9-b06a-44d9-9592-cf3a0bfa5a8e](https://github.com/user-attachments/assets/c2ea61f9-b06a-44d9-9592-cf3a0bfa5a8e)" />
   </p>
 
 * **2026-01-15 (GUI Prototype)**
@@ -200,8 +204,9 @@ flet run -r ./main_window.py
   2. 고객 검색 화면 구현 및 미반납 로그 출력
   3. PyInstaller EXE 생성 및 테스트
   4. 방화벽 포트 개방 (5432) 및 PostgreSQL `pg_hba.conf` 설정 (IPv4 local connections 허용)
+  
   <p>
-      <img width="271" height="141" alt="스크린샷 2026-01-20 165959" src="[https://github.com/user-attachments/assets/2b732a9f-7eb9-4e53-b514-540f517ac469](https://github.com/user-attachments/assets/2b732a9f-7eb9-4e53-b514-540f517ac469)" />
+  <img width="271" height="141" alt="스크린샷 2026-01-20 165959" src="[https://github.com/user-attachments/assets/2b732a9f-7eb9-4e53-b514-540f517ac469](https://github.com/user-attachments/assets/2b732a9f-7eb9-4e53-b514-540f517ac469)" />
   </p>
 
 * **2026-01-14 (CLI Prototype)**
@@ -222,14 +227,12 @@ flet run -r ./main_window.py
 
 ## 🗄️ Archived Specifications (Legacy)
 
-과거 개발 단계에서 작성되었으나, **Logic 2.1** 도입으로 인해 현재는 폐기되거나 변경된 로직 사양서입니다. 개발 히스토리 보존을 위해 남겨둡니다.
-
 <details>
 <summary>📂 Basic Logic 2.0 (Detailed Spec)</summary>
 
 ### 1. Login Logic
 
-1. [x] **DB 연결정보를 확인**
+1. **DB 연결정보를 확인**
     - 연결정보가 저장된 INI File 유무 확인
     - 화이트 리스트 확인: `postgresql.conf`, `pg_hba.conf`
     - **Process:**
@@ -237,7 +240,7 @@ flet run -r ./main_window.py
             - 일치: `DB Connect` 성공 → 2단계로 진입
             - 불일치: 에러 코드 출력 및 연결 정보 재입력 유도
 
-2. [x] **직원 ID를 확인 (Staff-Table)**
+2. **직원 ID를 확인 (Staff-Table)**
     - **Limit:** Login Count = 3
     - **Validation:** DB (Staff Table)의 `username`, `password`, `active=True` 확인
         - 일치: `DB Access` 성공
@@ -246,7 +249,7 @@ flet run -r ./main_window.py
 
 ### 2. Customer Check / Return / Rental / Calculation Logic
 
-1. [ ] **회원 여부 확인 (Barcode) (Customer-Table)**
+1. **회원 여부 확인 (Barcode) (Customer-Table)**
     - **1-1. 고객 ID 확인 (customer_id)**
         - 확인됨: `1 End`
         - 미확인: `1-2` 검색 화면으로 이동
@@ -258,7 +261,7 @@ flet run -r ./main_window.py
         - Auto-Increment ID 사용 (SERIAL/SEQUENCE)
         - 필수 정보: `store_id`, `first/last name`, `email`, `address_id` (Address 테이블 신규 생성 포함)
 
-2. [ ] **재고 확인 (Barcode) (Inventory-Table)**
+2. **재고 확인 (Barcode) (Inventory-Table)**
     - **2-1. 상품 Barcode 확인 (inventory_id)**
         - 확인됨: `2-2`
         - 미확인: `2-4` 검색 화면으로 이동
@@ -273,7 +276,7 @@ flet run -r ./main_window.py
     - **2-5 ~ 2-7. 신규 재고/영화/배우 추가**
         - 기존 Film/Actor 존재 여부에 따라 분기 처리하여 신규 등록 수행.
 
-3. [ ] **반납 (Rental-Table)**
+3. **반납 (Rental-Table)**
     - **Process:**
         - `customer_id`와 `return_date is null` 조건으로 대여 기록 조회.
         - `(return_date - current_date)` 계산으로 연체 여부 판단.
@@ -282,7 +285,7 @@ flet run -r ./main_window.py
         - 연체 시: `over_rate = (Delay Days) * (rental_rate / rental_duration) * 1.1`
         - 파손/분실 시: `+ replacement_cost`
 
-4. [ ] **대여 (Rental-Table) & 결제**
+4. **대여 (Rental-Table) & 결제**
     - **Rental Process:**
         - 고객(`1`)과 재고(`2`) 확인.
         - 장바구니(Rental_Cart) 담기 (최대 5개 제한).
@@ -298,7 +301,7 @@ flet run -r ./main_window.py
 <summary>📂 Basic Logic 1.0 (Deprecated)</summary>
 
 ### 1. Calculation Logic (Deprecated)
-> 초기 기획 단계의 연체료 및 대여료 산정 기준 (현재 폐기됨)
+> 연체료 및 대여료 산정 기준
 
 * **a. Rental Period (대여 기간):** `1 Day`, `3 Day`, `7 Day`
 * **b. Rental Rate (대여료):** ~~Fixed: 1000, 2500, 5000~~
@@ -320,6 +323,5 @@ flet run -r ./main_window.py
     * `config.ini`를 통한 DB 연결 정보 관리 도입.
     * `Fulltext Search` 기능을 활용한 Title 검색창 추가.
     * GUI 프레임워크 변경: `Tkinter` → `Flet` (Cross-platform 지원).
-    * DB 날짜 데이터(`2006년`) 최신화를 위한 `Interval` 쿼리 로직 구상.
 
 </details>
