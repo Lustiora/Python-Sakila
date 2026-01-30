@@ -196,7 +196,7 @@ flet run -r ./main_window.py
   6. 구조 변경을 통한 동작 흐름 최적화 (`GUI_test2.py`)
   
   <p>
-  <img width="707" height="437" alt="스크린샷 2026-01-20 170017" src="[https://github.com/user-attachments/assets/c2ea61f9-b06a-44d9-9592-cf3a0bfa5a8e](https://github.com/user-attachments/assets/c2ea61f9-b06a-44d9-9592-cf3a0bfa5a8e)" />
+  <img width="707" height="437" alt="스크린샷 2026-01-20 170017" src="https://github.com/user-attachments/assets/c2ea61f9-b06a-44d9-9592-cf3a0bfa5a8e" />
   </p>
 
 * **2026-01-15 (GUI Prototype)**
@@ -206,7 +206,7 @@ flet run -r ./main_window.py
   4. 방화벽 포트 개방 (5432) 및 PostgreSQL `pg_hba.conf` 설정 (IPv4 local connections 허용)
   
   <p>
-  <img width="271" height="141" alt="스크린샷 2026-01-20 165959" src="[https://github.com/user-attachments/assets/2b732a9f-7eb9-4e53-b514-540f517ac469](https://github.com/user-attachments/assets/2b732a9f-7eb9-4e53-b514-540f517ac469)" />
+  <img width="271" height="141" alt="스크린샷 2026-01-20 165959" src="https://github.com/user-attachments/assets/2b732a9f-7eb9-4e53-b514-540f517ac469" />
   </p>
 
 * **2026-01-14 (CLI Prototype)**
