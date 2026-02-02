@@ -17,12 +17,12 @@ def build_film_ui(page, conn):
                 """ select 
                         fid , 
                         title , 
-                        description , 
                         category , 
                         price , 
                         length , 
                         rating , 
-                        actors  
+                        actors ,
+                        description 
                     from film_list
                     where title Ilike %s or description ILike %s or actors ILike %s 
                     order by
@@ -58,12 +58,12 @@ def build_film_ui(page, conn):
         columns=[
             flet.DataColumn(flet.Text("ID")),
             flet.DataColumn(flet.Text("Title")),
-            flet.DataColumn(flet.Text("Description")),
             flet.DataColumn(flet.Text("Category")),
             flet.DataColumn(flet.Text("Price")),
             flet.DataColumn(flet.Text("Length")),
             flet.DataColumn(flet.Text("Rating")),
             flet.DataColumn(flet.Text("Actors")),
+            flet.DataColumn(flet.Text("Description")),
         ],
         rows=[],
         border=flet.border.all(1, "flet.Colors.BLUE_GREY_100"), # DataTable Titlebar

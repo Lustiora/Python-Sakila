@@ -3,7 +3,7 @@ from menu.menu_search_inventory import *
 from menu.menu_search_film import *
 
 def view_search_customer(page, store_id, conn):
-    customer_id_text, search_id, customer_id = build_customer_id_ui(page, conn) # Module Return Value get
+    customer_id_text, search_id, customer_id = build_customer_id_ui(page, store_id, conn) # Module Return Value get
     customer_name_text, search_name, customer_name = build_customer_name_ui(page, store_id, conn)
     return flet.Column(
         controls=[
@@ -12,7 +12,7 @@ def view_search_customer(page, store_id, conn):
             ], height=80),
             flet.Divider(),
             flet.Row([
-                flet.Text("ID :", style=flet.TextThemeStyle.BODY_LARGE, width=200, text_align="right"),
+                flet.Text("ID :", style=flet.TextThemeStyle.BODY_LARGE, width=100, text_align="right"),
                 customer_id_text,
                 search_id
             ], height=30),
@@ -30,7 +30,7 @@ def view_search_customer(page, store_id, conn):
             ], alignment=flet.alignment.center),
             flet.Divider(),
             flet.Row([
-                flet.Text("Name :", style=flet.TextThemeStyle.BODY_LARGE, width=200, text_align="right"),
+                flet.Text("Name :", style=flet.TextThemeStyle.BODY_LARGE, width=100, text_align="right"),
                 customer_name_text,
                 search_name
             ], height=30),
@@ -118,8 +118,8 @@ def view_search_film(page, conn):
             ], height=80),
             flet.Divider(),
             flet.Row([
-                flet.Text("Title & Description & Actor :",
-                          style=flet.TextThemeStyle.BODY_LARGE, width=200, text_align="right"),
+                flet.Text("Keyword :",
+                          style=flet.TextThemeStyle.BODY_LARGE, width=100, text_align="right"),
                 input_film_title,
                 search_title
             ], height=30),
