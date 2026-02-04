@@ -27,7 +27,7 @@ def run_main(page: flet.Page): # test
     main_quit = flet.AlertDialog(
         title=flet.Text("Quit"),
         content=flet.Text("Exit?"),
-        actions=[flet.TextButton("OK", on_click=close_main),
+        actions=[flet.TextButton("OK", on_click=close_main, autofocus=True),
                  flet.TextButton("Cancel", on_click=close_pop)
                  ], actions_alignment=flet.MainAxisAlignment.END)
     def window_event(e):
