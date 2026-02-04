@@ -1,6 +1,8 @@
 import flet
 from window import Font
 
+# ---------- 폐기 ----------
+
 def build_film_ui(page, conn):
     def handle_search(e):
         film_title_value = f"%{input_film_title.value}%"

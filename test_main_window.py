@@ -14,16 +14,16 @@ def run_main(page: flet.Page): # test
     page.window.height = 720
     page.window.min_width = page.window.width
     page.window.min_height = page.window.height
+    page.session.set("initialized", True)
     time.sleep(0.1) # Loading Time Force : 옵션 적용 전 시작 방지
     page.update()
     # -- Exit --
     page.window.prevent_close = True # X 이벤트 옵션 추가
     def close_pop(e):
-        e.page.close(main_quit)  # 팝업창 종료 명령어
+        page.close(main_quit)  # 팝업창 종료 명령어
     def close_main(e):
         page.window.prevent_close = False
         e.page.window.close()
-        e.page.window.destroy()
     main_quit = flet.AlertDialog(
         title=flet.Text("Quit"),
         content=flet.Text("Exit?"),
@@ -58,4 +58,5 @@ def run_main(page: flet.Page): # test
     # -- Update --
     page.update()
 # -- Run Test --
-flet.app(target=run_main, assets_dir="assets") # test
+if __name__ == "__main__":
+    flet.app(target=run_main, assets_dir="assets") # test

@@ -6,7 +6,7 @@ from menu.menu_add import *
 
 def nav(page: flet.Page): # test
     basic_content = flet.Container(
-        content=view_home(),
+        content=view_search_rental(), # 테스트 중인 컨텐츠
         alignment=flet.alignment.center,
         expand=True,
         border_radius=5,
@@ -33,8 +33,8 @@ def nav(page: flet.Page): # test
             # basic_content.content = view_search_customer(page, store_id, conn)
         # elif index == 1.2:  # 재고 조회
             # basic_content.content = view_search_inventory(page, store_id, conn)
-            # elif index == 1.3: # 영화 조회
-            #     basic_content.content = view_search_film(page, conn)
+        # elif index == 1.3: # 영화 조회
+        #     basic_content.content = view_search_film(page, conn)
         elif index == 1.4:  # 대여상태 조회
             basic_content.content = view_search_rental()
         elif index == 1.5:  # 결제이력 조회
