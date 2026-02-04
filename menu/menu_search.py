@@ -1,9 +1,6 @@
-import flet
-from flet.core.types import CrossAxisAlignment, MainAxisAlignment
-
 from menu.menu_search_customer import *
 from menu.menu_search_inventory import *
-from menu.menu_search_film import *
+from menu.menu_search_rental import *
 
 def view_search_customer(page, store_id, conn):
     input_customer, view_customer = build_customer_ui(page, store_id, conn) # Module Return Value get
@@ -55,66 +52,13 @@ def view_search_inventory(page, store_id, conn):
 
 def view_search_rental():
     dummy = flet.Container()
-    total_rentals = flet.Container(
-        bgcolor=flet.Colors.GREY_200,
-        expand=1,
-        padding=10,
-        border_radius=10,
-        height=80,
-        alignment=flet.alignment.center_left,
-        border=flet.border.all(1, "flet.Colors.BLUE_GREY_50"),
-        content=flet.Column([
-            flet.Text("Total Rentals:", style=flet.TextThemeStyle.TITLE_MEDIUM),
-            flet.Text("대여중인 재고", style=flet.TextThemeStyle.HEADLINE_SMALL, weight=flet.FontWeight.BOLD)
-        ], spacing=1)
-    )
-    overdue = flet.Container(
-        bgcolor=flet.Colors.GREY_200,
-        expand=1,
-        padding=10,
-        border_radius=10,
-        height=80,
-        alignment=flet.alignment.center_left,
-        border=flet.border.all(1, "flet.Colors.BLUE_GREY_50"),
-        content=flet.Column([
-            flet.Text("Overdue:", style=flet.TextThemeStyle.TITLE_MEDIUM, color=flet.Colors.ERROR),
-            flet.Text("연체중인 재고", style=flet.TextThemeStyle.HEADLINE_SMALL, weight=flet.FontWeight.BOLD, color=flet.Colors.ERROR)
-        ], spacing=1)
-    )
-    due_total = flet.Container(
-        bgcolor=flet.Colors.GREY_200,
-        expand=1,
-        padding=10,
-        border_radius=10,
-        height=80,
-        alignment=flet.alignment.center_left,
-        border=flet.border.all(1, "flet.Colors.BLUE_GREY_50"),
-        content=flet.Column([
-            flet.Text("Due Today:", style=flet.TextThemeStyle.TITLE_MEDIUM),
-            flet.Text("금일 반납예정인 재고", style=flet.TextThemeStyle.HEADLINE_SMALL, weight=flet.FontWeight.BOLD)
-        ], spacing=1)
-    )
-    input_rental = flet.TextField(
-        hint_text=" Rental ID or Customer Name ↵", on_submit="", label="Press Enter to Search",
-        text_size=Font.big_fontsize, expand=Ratios.id, content_padding=10, max_length=30)
-    filter_rental = flet.Column(
-        controls=[
-            flet.Dropdown(
-                label="Filter",
-                bgcolor=flet.Colors.GREY_200,
-                options=[
-                    flet.DropdownOption("Red"),
-                    flet.DropdownOption("Blue"),
-                    flet.DropdownOption("Green"),
-                ]
-            )
-        ],alignment=MainAxisAlignment.CENTER
-    )
+    total_rentals, overdue, due_total, input_rental, filter_rental = build_rental_ui()
     return flet.Column(
         controls=[
             flet.Row([
                 flet.Text("Rental Status Overview", style=flet.TextThemeStyle.DISPLAY_SMALL,
                           weight=flet.FontWeight.BOLD)], height=60),
+            flet.Divider(),
             flet.Row([total_rentals, dummy, overdue, dummy, due_total]),
             dummy,
             flet.Row([input_rental, filter_rental], height=60),
@@ -122,7 +66,7 @@ def view_search_rental():
             flet.Column([
                 flet.Container(
                     bgcolor=flet.Colors.GREY_200,
-                    # content=view_inventory,
+                    # content="", # 하단 표시 컨텐츠 (기본 대여중인 목록 전체)
                     alignment=flet.alignment.top_left,
                     expand=True,
                     padding=10,

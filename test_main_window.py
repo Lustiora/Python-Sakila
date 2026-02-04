@@ -14,8 +14,14 @@ def run_main(page: flet.Page): # test
     page.window.height = 720
     page.window.min_width = page.window.width
     page.window.min_height = page.window.height
-    page.session.set("initialized", True)
-    time.sleep(0.1) # Loading Time Force : 옵션 적용 전 시작 방지
+    if not page.session.get("initialized"):
+        page.window.width = 1280
+        page.window.height = 720
+        page.window.min_width = 1280
+        page.window.min_height = 720
+        page.window.resizable = True
+        page.session.set("initialized", True)
+        time.sleep(0.1)  # 윈도우 크기 적용 대기
     page.update()
     # -- Exit --
     page.window.prevent_close = True # X 이벤트 옵션 추가

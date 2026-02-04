@@ -1,241 +1,244 @@
 ## [README](/README.md)
 
-* **Latest Update: 2026-02-03**
-1. Datatable → Row,Column,Expand 방식으로 전환 (flet 0.28.3 : page.on_resize 명령어 부재)
-2. Popup Autofocus 추가
-3. **Search Customer:** 검색 화면 재설계 (ID or Name (First or Last Name))
-4. **Search Inventory:** View Table 재생성 및 쿼리 재설정 / 재설계 (ID or Film Title)
-5. search query 분리
-6. input event 이후 포커스 연결 : input_inventory.focus()
-7. Search Modules (Core Features), C. Rental Search 추가 (Film Search 제거)
-    
-    <details><summary>Query</summary>
-    
-    ```sql
-    <- VIEW Table 생성 ->
-    CREATE OR REPLACE VIEW public.inventory_data as (
-    select 
-        i.inventory_id ,
-        f.title ,
-        i.store_id ,
-        r.rental_date ,
-        r.return_date ,
-        case when rank() over (
-            partition by i.inventory_id , i.store_id order by r.rental_date desc) = 1 then 1
-        else null end as status ,
-        f.rental_rate 
-    from inventory i
-    inner join film f
-        on i.film_id = f.film_id
-    inner join rental r
-        on i.inventory_id = r.inventory_id)
-    --
-    <- Query -> 
-    select
-        inventory_id ,
-        title ,
-        case when store_id = 1 then '🇨🇦 Lethbridge' else '🇦🇺 Woodridge' end as store ,
-        case when return_date is not null then 'In stock' else 'Checked out' end as status ,
-        rental_date ,
-        rental_rate
-    from inventory_data
-    where status is not null
-    and inventory_id = %s
-    ```
-    
-    </details>
-
----
+* **2026-02-04**
+	1. **Search Rental:** 대여상태 조회 화면 설계 중
+	2. `test_main_window.py`, `test_nav_tile.py` Update
+	3. **Search Rental:** 구성 모듈 분리
+	4. Hot Reload.bat / .sh Create
+* **2026-02-03**
+	1. Datatable → Row,Column,Expand 방식으로 전환 (flet 0.28.3 : page.on_resize 명령어 부재)
+	2. Popup Autofocus 추가
+	3. **Search Customer:** 검색 화면 재설계 (ID or Name (First or Last Name))
+	4. **Search Inventory:** View Table 재생성 및 쿼리 재설정 / 재설계 (ID or Film Title)
+	5. search query 분리
+	6. input event 이후 포커스 연결 : input_inventory.focus()
+	7. Search Modules (Core Features), C. Rental Search 추가 (Film Search 제거)
+	    
+	    <details><summary>Query</summary>
+	    
+	    ```sql
+	    <- VIEW Table 생성 ->
+	    CREATE OR REPLACE VIEW public.inventory_data as (
+	    select 
+	        i.inventory_id ,
+	        f.title ,
+	        i.store_id ,
+	        r.rental_date ,
+	        r.return_date ,
+	        case when rank() over (
+	            partition by i.inventory_id , i.store_id order by r.rental_date desc) = 1 then 1
+	        else null end as status ,
+	        f.rental_rate 
+	    from inventory i
+	    inner join film f
+	        on i.film_id = f.film_id
+	    inner join rental r
+	        on i.inventory_id = r.inventory_id)
+	    --
+	    <- Query -> 
+	    select
+	        inventory_id ,
+	        title ,
+	        case when store_id = 1 then '🇨🇦 Lethbridge' else '🇦🇺 Woodridge' end as store ,
+	        case when return_date is not null then 'In stock' else 'Checked out' end as status ,
+	        rental_date ,
+	        rental_rate
+	    from inventory_data
+	    where status is not null
+	    and inventory_id = %s
+	    ```
+	    
+	    </details>
 
 * **2026-02-02**
-1. Customer ID Query Update 및 IF문으로 출력물에 따른 색상 변동 기능 추가
-   
-    <details><summary>Query</summary>
-    
-    수정 전
-    
-    ```sql
-    select 
-          c.customer_id , 
-          c.create_date  , 
-          c.first_name , 
-          c.last_name , 
-          c.email ,
-          a.address
-      from customer c 
-      inner join address a 
-          on c.address_id = a.address_id
-      where c.activebool is true
-          and c.customer_id = %s
-    ```
-    
-    수정 후
-    
-    ```sql
-    <- VIEW Table 생성 ->
-    CREATE OR REPLACE VIEW public.not_return_customer as
-     select distinct r.customer_id
-     from rental r 
-     inner join inventory i 
-         on r.inventory_id = i.inventory_id 
-     inner join film f 
-         on i.film_id = f.film_id 
-     where r.return_date is null
-         and r.rental_date + (f.rental_duration * INTERVAL '1 day') < now();
-    --
-    <- Query -> 
-    select 
-       case when c.store_id = 1 then '🇨🇦 Lethbridge' else '🇦🇺 Woodridge' end as store ,
-       c.customer_id , 
-       c.first_name || ' ' || c.last_name as name, 
-       c.email, 
-       a.address, 
-       c.create_date ,
-       case when n.customer_id is not null then 'Overdue' else 'Normal' end as status ,
-       c.store_id
-    from customer c
-    inner join address a 
-     on c.address_id = a.address_id
-    left join not_return_customer n 
-       on n.customer_id = c.customer_id
-    where c.activebool is true
-       and c.customer_id = %s
-    ```
-    
-    </details>
+	1. Customer ID Query Update 및 IF문으로 출력물에 따른 색상 변동 기능 추가
+	   
+	    <details><summary>Query</summary>
+	    
+	    수정 전
+	    
+	    ```sql
+	    select 
+	          c.customer_id , 
+	          c.create_date  , 
+	          c.first_name , 
+	          c.last_name , 
+	          c.email ,
+	          a.address
+	      from customer c 
+	      inner join address a 
+	          on c.address_id = a.address_id
+	      where c.activebool is true
+	          and c.customer_id = %s
+	    ```
+	    
+	    수정 후
+	    
+	    ```sql
+	    <- VIEW Table 생성 ->
+	    CREATE OR REPLACE VIEW public.not_return_customer as
+	     select distinct r.customer_id
+	     from rental r 
+	     inner join inventory i 
+	         on r.inventory_id = i.inventory_id 
+	     inner join film f 
+	         on i.film_id = f.film_id 
+	     where r.return_date is null
+	         and r.rental_date + (f.rental_duration * INTERVAL '1 day') < now();
+	    --
+	    <- Query -> 
+	    select 
+	       case when c.store_id = 1 then '🇨🇦 Lethbridge' else '🇦🇺 Woodridge' end as store ,
+	       c.customer_id , 
+	       c.first_name || ' ' || c.last_name as name, 
+	       c.email, 
+	       a.address, 
+	       c.create_date ,
+	       case when n.customer_id is not null then 'Overdue' else 'Normal' end as status ,
+	       c.store_id
+	    from customer c
+	    inner join address a 
+	     on c.address_id = a.address_id
+	    left join not_return_customer n 
+	       on n.customer_id = c.customer_id
+	    where c.activebool is true
+	       and c.customer_id = %s
+	    ```
+	    
+	    </details>
 
 * **2026-01-31**
-1. query_current_status module query 단축 및 스토어 정보를 연결하여 해당 점포에만 존재하는 재고를 출력
-   
-   <details><summary>Query</summary>
-   
-      수정 전
-   
-   ```sql
-   with search_int_inventory_idtle_1 as (
-   select f.film_id
-   from inventory i
-   inner join film f
-       on i.film_id = f.film_id
-   where i.inventory_id = %s
-   ), search_int_inventory_idtle_2 as (
-   select
-       row_number() over (partition by i.inventory_id order by r.rental_date desc) as row ,
-       i.inventory_id ,
-       f.title ,
-       r.rental_date ,
-       r.return_date
-   from inventory i
-   inner join search_int_inventory_idtle_1 s
-       on i.film_id = s.film_id
-   inner join film f
-       on i.film_id = f.film_id
-   left join rental r
-       on i.inventory_id = r.inventory_id
-   )
-   select
-       inventory_id ,
-       title,
-       case
-       when rental_date is not null and return_date is null then 'Checked out'
-       else 'In stock'
-       end as status
-   from search_int_inventory_idtle_2
-   where row = 1 """,(int_inventory_id,)
-   ```
-   
-       수정 후
-   
-   ```sql
-   <- VIEW Table 생성 ->
-   CREATE OR REPLACE VIEW public.inventory_data as
-   select 
-       row_number() over (partition by i.inventory_id order by r.rental_date desc) as row ,
-       f.film_id ,
-       i.store_id ,
-       i.inventory_id , 
-       r.return_date ,
-       case when r.rental_date is not null and r.return_date is null then 'Checked out'
-       else 'In stock' end as status 
-   from inventory i 
-   inner join film f 
-       on i.film_id = f.film_id 
-   left join rental r 
-       on i.inventory_id = r.inventory_id;
-   --
-   <- Query ->
-   select f.film_id
-   from inventory i 
-   inner join film f 
-       on i.film_id = f.film_id
-   where i.inventory_id = %s """,(int_inventory_id,)
-   )
-   film_store_inventory_id = cursor.fetchone()
-   result = film_store_inventory_id[0]
-   cursor.execute(""" 
-   select 
-       inventory_id, 
-       status
-   from inventory_data 
-   where row = 1
-       and film_id = %s
-       and store_id = %s """,(result, store_id,)
-   ```
-   
-   </details>
-
-2. Improved variable and function names
-   
-   <details><summary>Improvement History</summary>
-   
-   | Old                            | New                          | 비고 (역할)                        |
-   | ------------------------------ | ---------------------------- | ------------------------------ |
-   | **`menu.py`**                  | --                           | --                             |
-   | `c_home`                       | **`view_home`**              | 메인 홈 화면 반환                     |
-   | `c_status`                     | **`view_system_dashboard`**  | 시스템 상태 대시보드 반환                 |
-   | `c_statistic`                  | **`view_analytics`**         | 통계/분석 화면 반환                    |
-   | `c_manager`                    | **`view_admin_manager`**     | 관리자 설정 화면 반환                   |
-   | **`menu_search.py`**           | --                           | --                             |
-   | `search_customer`              | **`view_search_customer`**   | 고객 조회 전체 화면 구성                 |
-   | `search_inventory`             | **`view_search_inventory`**  | 재고 조회 전체 화면 구성                 |
-   | `search_film`                  | **`view_search_film`**       | 영화 조회 전체 화면 구성                 |
-   | **`menu_search_inventory.py`** | --                           | --                             |
-   | `search_inventory_data`        | **`build_inventory_ui`**     | UI 컴포넌트 생성 및 반환                |
-   | `stock_id_module`              | **`query_basic_info`**       | DB: 기본 정보 조회 로직                |
-   | `stock_rental_module`          | **`query_rental_history`**   | DB: 대여 이력 조회 로직                |
-   | `stock_title_module`           | **`query_current_status`**   | DB: 현재 상태(대여중/반납) 조회           |
-   | `iv_bu`                        | **`on_click_search`**        | 이벤트: 검색 버튼 클릭 핸들러              |
-   | `inventory_id`                 | **`input_inventory_id`**     | UI: 재고 ID 입력창 (TextField)      |
-   | `search`                       | **`btn_search`**             | UI: 검색 버튼 (Button)             |
-   | `stock_id_data`                | **`table_basic_info`**       | UI: 기본 정보 표 (DataTable)        |
-   | `stock_id`                     | **`ui_basic_info`**          | UI: 기본 정보 컨테이너 (Container/Row) |
-   | `stock_rental_data`            | **`table_rental_history`**   | UI: 대여 이력 표 (DataTable)        |
-   | `stock_rental`                 | **`ui_rental_history`**      | UI: 대여 이력 컨테이너                 |
-   | `stock_title_data`             | **`table_current_status`**   | UI: 현재 상태 표 (DataTable)        |
-   | `stock_title`                  | **`ui_current_status`**      | UI: 현재 상태 컨테이너                 |
-   | **`menu_search_film.py`**      | --                           | --                             |
-   | `search_film_title`            | **`build_film_ui`**          | UI 컴포넌트 생성 및 반환                |
-   | `sfq_title`                    | **`handle_search`**          | 이벤트: 검색 로직 핸들러                 |
-   | `film_title_text`              | **`input_film_title`**       | UI: 영화 제목 입력창                  |
-   | `film_title_data`              | **`table_film_list`**        | UI: 영화 목록 표                    |
-   | `film_title`                   | **`ui_film_list`**           | UI: 영화 목록 컨테이너                 |
-   | **`menu_search_customer.py`**  | --                           | --                             |
-   | `search_customer_id`           | **`build_customer_id_ui`**   | ID 검색 UI 생성                    |
-   | `customer_id_module`           | **`query_customer_by_id`**   | DB: ID로 고객 조회                  |
-   | `search_customer_name`         | **`build_customer_name_ui`** | 이름 검색 UI 생성                    |
-   | `customer_name_module`         | **`query_customer_by_name`** | DB: 이름으로 고객 조회                 |
-   | **`menu_add.py`**              |                              |                                |
-   | `add_customer`                 | **`view_add_customer`**      | 신규 등록 화면 반환                    |
-   | `add_inventory`                | **`view_add_inventory`**     | (이하 동일 규칙 적용)                  |
-   | `add_film`                     | **`view_add_film`**          |                                |
-   | **`menu_edit.py`**             | --                           | --                             |
-   | `edit_customer`                | **`view_edit_customer`**     | 정보 수정 화면 반환                    |
-   | `edit_inventory`               | **`view_edit_inventory`**    |                                |
-   | **`menu_delete.py`**           | --                           | --                             |
-   | `delete_customer`              | **`view_delete_customer`**   | 정보 삭제 화면 반환                    |
-   | `delete_inventory`             | **`view_delete_inventory`**  |                                |
-   
-   </details>
+	1. query_current_status module query 단축 및 스토어 정보를 연결하여 해당 점포에만 존재하는 재고를 출력
+	   
+	   <details><summary>Query</summary>
+	   
+	      수정 전
+	   
+	   ```sql
+	   with search_int_inventory_idtle_1 as (
+	   select f.film_id
+	   from inventory i
+	   inner join film f
+	       on i.film_id = f.film_id
+	   where i.inventory_id = %s
+	   ), search_int_inventory_idtle_2 as (
+	   select
+	       row_number() over (partition by i.inventory_id order by r.rental_date desc) as row ,
+	       i.inventory_id ,
+	       f.title ,
+	       r.rental_date ,
+	       r.return_date
+	   from inventory i
+	   inner join search_int_inventory_idtle_1 s
+	       on i.film_id = s.film_id
+	   inner join film f
+	       on i.film_id = f.film_id
+	   left join rental r
+	       on i.inventory_id = r.inventory_id
+	   )
+	   select
+	       inventory_id ,
+	       title,
+	       case
+	       when rental_date is not null and return_date is null then 'Checked out'
+	       else 'In stock'
+	       end as status
+	   from search_int_inventory_idtle_2
+	   where row = 1 """,(int_inventory_id,)
+	   ```
+	   
+	       수정 후
+	   
+	   ```sql
+	   <- VIEW Table 생성 ->
+	   CREATE OR REPLACE VIEW public.inventory_data as
+	   select 
+	       row_number() over (partition by i.inventory_id order by r.rental_date desc) as row ,
+	       f.film_id ,
+	       i.store_id ,
+	       i.inventory_id , 
+	       r.return_date ,
+	       case when r.rental_date is not null and r.return_date is null then 'Checked out'
+	       else 'In stock' end as status 
+	   from inventory i 
+	   inner join film f 
+	       on i.film_id = f.film_id 
+	   left join rental r 
+	       on i.inventory_id = r.inventory_id;
+	   --
+	   <- Query ->
+	   select f.film_id
+	   from inventory i 
+	   inner join film f 
+	       on i.film_id = f.film_id
+	   where i.inventory_id = %s """,(int_inventory_id,)
+	   )
+	   film_store_inventory_id = cursor.fetchone()
+	   result = film_store_inventory_id[0]
+	   cursor.execute(""" 
+	   select 
+	       inventory_id, 
+	       status
+	   from inventory_data 
+	   where row = 1
+	       and film_id = %s
+	       and store_id = %s """,(result, store_id,)
+	   ```
+	   
+	   </details>
+	
+	2. Improved variable and function names
+	   
+	   <details><summary>Improvement History</summary>
+	   
+	   | Old                            | New                          | 비고 (역할)                        |
+	   | ------------------------------ | ---------------------------- | ------------------------------ |
+	   | **`menu.py`**                  | --                           | --                             |
+	   | `c_home`                       | **`view_home`**              | 메인 홈 화면 반환                     |
+	   | `c_status`                     | **`view_system_dashboard`**  | 시스템 상태 대시보드 반환                 |
+	   | `c_statistic`                  | **`view_analytics`**         | 통계/분석 화면 반환                    |
+	   | `c_manager`                    | **`view_admin_manager`**     | 관리자 설정 화면 반환                   |
+	   | **`menu_search.py`**           | --                           | --                             |
+	   | `search_customer`              | **`view_search_customer`**   | 고객 조회 전체 화면 구성                 |
+	   | `search_inventory`             | **`view_search_inventory`**  | 재고 조회 전체 화면 구성                 |
+	   | `search_film`                  | **`view_search_film`**       | 영화 조회 전체 화면 구성                 |
+	   | **`menu_search_inventory.py`** | --                           | --                             |
+	   | `search_inventory_data`        | **`build_inventory_ui`**     | UI 컴포넌트 생성 및 반환                |
+	   | `stock_id_module`              | **`query_basic_info`**       | DB: 기본 정보 조회 로직                |
+	   | `stock_rental_module`          | **`query_rental_history`**   | DB: 대여 이력 조회 로직                |
+	   | `stock_title_module`           | **`query_current_status`**   | DB: 현재 상태(대여중/반납) 조회           |
+	   | `iv_bu`                        | **`on_click_search`**        | 이벤트: 검색 버튼 클릭 핸들러              |
+	   | `inventory_id`                 | **`input_inventory_id`**     | UI: 재고 ID 입력창 (TextField)      |
+	   | `search`                       | **`btn_search`**             | UI: 검색 버튼 (Button)             |
+	   | `stock_id_data`                | **`table_basic_info`**       | UI: 기본 정보 표 (DataTable)        |
+	   | `stock_id`                     | **`ui_basic_info`**          | UI: 기본 정보 컨테이너 (Container/Row) |
+	   | `stock_rental_data`            | **`table_rental_history`**   | UI: 대여 이력 표 (DataTable)        |
+	   | `stock_rental`                 | **`ui_rental_history`**      | UI: 대여 이력 컨테이너                 |
+	   | `stock_title_data`             | **`table_current_status`**   | UI: 현재 상태 표 (DataTable)        |
+	   | `stock_title`                  | **`ui_current_status`**      | UI: 현재 상태 컨테이너                 |
+	   | **`menu_search_film.py`**      | --                           | --                             |
+	   | `search_film_title`            | **`build_film_ui`**          | UI 컴포넌트 생성 및 반환                |
+	   | `sfq_title`                    | **`handle_search`**          | 이벤트: 검색 로직 핸들러                 |
+	   | `film_title_text`              | **`input_film_title`**       | UI: 영화 제목 입력창                  |
+	   | `film_title_data`              | **`table_film_list`**        | UI: 영화 목록 표                    |
+	   | `film_title`                   | **`ui_film_list`**           | UI: 영화 목록 컨테이너                 |
+	   | **`menu_search_customer.py`**  | --                           | --                             |
+	   | `search_customer_id`           | **`build_customer_id_ui`**   | ID 검색 UI 생성                    |
+	   | `customer_id_module`           | **`query_customer_by_id`**   | DB: ID로 고객 조회                  |
+	   | `search_customer_name`         | **`build_customer_name_ui`** | 이름 검색 UI 생성                    |
+	   | `customer_name_module`         | **`query_customer_by_name`** | DB: 이름으로 고객 조회                 |
+	   | **`menu_add.py`**              |                              |                                |
+	   | `add_customer`                 | **`view_add_customer`**      | 신규 등록 화면 반환                    |
+	   | `add_inventory`                | **`view_add_inventory`**     | (이하 동일 규칙 적용)                  |
+	   | `add_film`                     | **`view_add_film`**          |                                |
+	   | **`menu_edit.py`**             | --                           | --                             |
+	   | `edit_customer`                | **`view_edit_customer`**     | 정보 수정 화면 반환                    |
+	   | `edit_inventory`               | **`view_edit_inventory`**    |                                |
+	   | **`menu_delete.py`**           | --                           | --                             |
+	   | `delete_customer`              | **`view_delete_customer`**   | 정보 삭제 화면 반환                    |
+	   | `delete_inventory`             | **`view_delete_inventory`**  |                                |
+	   
+	   </details>
 
 * **2026-01-30**
   

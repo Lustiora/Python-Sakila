@@ -81,20 +81,25 @@ Sakila 샘플 데이터베이스를 기반으로 회원 관리, 재고 관리, �
 
 ## 🚀 Installation & Run (Hot Reload)
 
-개발 환경에서의 실행 방법.<br>
-`db_connect` 모듈 Hot Reload 불가.
-
-**Environment:**
-
-* Path: `~/Python-Sakila`
-* Python Interpreter: `.venv/Scripts/python.exe`
-
-**Run Command:**
-
+* **Project Folder Console:**
 ```bash
-# flet run -r [Target File]
-flet run -r ./main_window.py
+# Python Command Select Folder link
+.venv\Scripts\activate
+
+# Run Command
+flet run -r -w test_main_window.py
+	-r : Hot Reload (Save Refresh)
+	-w : Web Browser
+	-p : Select Port `-p 5000 => localhost:5000`
+	-d : Directory Monitor `-d . => Sync Folder Monitor`
+	-v : Full Log Print
+
+# Exit ( Ctrl + C )
 ```
+
+* PyCharm → Setting → Appearance & ... → System Settings → AutoSave Sync ... → `OFF`
+* Hot_Reload_for_Linux.sh → permission `chmod +x Hot_Reload_for_Linux.sh`
+  * Run → `bash Hot_Reload_for_Linux.sh`
 
 ---
 
