@@ -4,7 +4,7 @@ from menu.menu_edit import *
 from menu.menu_delete import *
 from menu.menu_add import *
 
-def nav(page: flet.Page): # test
+def nav(page: flet.Page, login_db, login_host, login_port, store_address, staff_user, store_id, conn): # test
     basic_content = flet.Container(
         content=view_search_rental(), # 테스트 중인 컨텐츠
         alignment=flet.alignment.center,
@@ -29,10 +29,10 @@ def nav(page: flet.Page): # test
     def on_nav_change(index):
         if index == 0:  # 메인화면
             basic_content.content = view_home()
-        # elif index == 1.1:  # 고객 조회
-            # basic_content.content = view_search_customer(page, store_id, conn)
-        # elif index == 1.2:  # 재고 조회
-            # basic_content.content = view_search_inventory(page, store_id, conn)
+        elif index == 1.1:  # 고객 조회
+            basic_content.content = view_search_customer(page, store_id, conn)
+        elif index == 1.2:  # 재고 조회
+            basic_content.content = view_search_inventory(page, store_id, conn)
         # elif index == 1.3: # 영화 조회
         #     basic_content.content = view_search_film(page, conn)
         elif index == 1.4:  # 대여상태 조회
@@ -74,7 +74,7 @@ def nav(page: flet.Page): # test
         elif index == 6:  # 관리
             basic_content.content = view_manager()
         elif index == 7:  # 접속 상태
-            pass # test
+            basic_content.content = view_status(login_db, login_host, login_port, store_address, staff_user)
 
         basic_content.update()
     tile_column = flet.Column(
@@ -97,10 +97,10 @@ def nav(page: flet.Page): # test
                         title=flet.Text("Inventory"),
                         content_padding=flet.padding.only(left=40),
                         on_click=lambda e: on_nav_change(1.2)
-                    ),flet.ListTile(
-                        title=flet.Text("Film"),
-                        content_padding=flet.padding.only(left=40),
-                        on_click=lambda e: on_nav_change(1.3)
+                    # ),flet.ListTile(
+                    #     title=flet.Text("Film"),
+                    #     content_padding=flet.padding.only(left=40),
+                    #     on_click=lambda e: on_nav_change(1.3)
                     ),flet.ListTile(
                         title=flet.Text("Rental"),
                         content_padding=flet.padding.only(left=40),

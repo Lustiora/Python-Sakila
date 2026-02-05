@@ -2,3 +2,5 @@
 /storage
 /build
 /.README.md.kate-swp
+/__pycache__
+/menu/__pycache__
