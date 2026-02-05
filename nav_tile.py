@@ -36,7 +36,7 @@ def nav(page: flet.Page, login_db, login_host, login_port, store_address, staff_
         # elif index == 1.3: # 영화 조회
         #     basic_content.content = view_search_film(page, conn)
         elif index == 1.4: # 대여상태 조회
-            basic_content.content = view_search_rental()
+            basic_content.content = view_search_rental(page, store_id, conn)
         elif index == 1.5: # 결제이력 조회
             basic_content.content = view_search_payment()
         elif index == 2.1: # 고객정보 변경

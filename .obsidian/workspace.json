@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "WORKFLOW.md",
                 "mode": "preview",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "WORKFLOW"
             }
           }
         ]
@@ -186,9 +186,6 @@
   },
   "active": "78fce1c90a870b72",
   "lastOpenFiles": [
-    "test_main_window.py~",
-    "query.py~",
-    "WORKFLOW.md",
     "Hot Reload for Linux.sh",
     "Hot Reload for Windows.bat",
     "Hot Reload.sh",
@@ -197,6 +194,8 @@
     "menu/menu_search_rental.py~",
     "menu/menu_search_rental.py",
     "menu/menu_search.py~",
+    "WORKFLOW.md",
+    "test_main_window.py~",
     "plet_test/if_int_test.py"
   ]
 }

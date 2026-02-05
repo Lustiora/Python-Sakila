@@ -1,10 +1,24 @@
 ## [README](/README.md)
 
+* **2026-02-06**
+    1. **Search Rental:** Query Case문 오류 수정
+    2. **Search Rental:** `Search Rental error : ListView Control must be added to the page first` Fix
+       * rental_search_total_query Module 초기 실행 시 발생하는 Error `if rental_data.page:`를 추가하여 초기 Update 방지
+    3. **Search Rental:** Font Color 중복 사용 부분 Class Add
+    4. **Search Rental:** View Table: now() → CURRENT_DATE , return_due_today_query 수정 `due_day::date = today`
+
+* **2026-02-05**
+    1. Test Main Window: Conn Connect
+    2. **Search Rental:** Query 설계 완료
+    3. **Search Rental:** 화면 구성 완료 (Basic: Total Rentals View)
+    4. **Search Rental:** Filter Button Delete
+
 * **2026-02-04**
 	1. **Search Rental:** 대여상태 조회 화면 설계 중
 	2. `test_main_window.py`, `test_nav_tile.py` Update
 	3. **Search Rental:** 구성 모듈 분리
 	4. Hot Reload.bat / .sh Create
+
 * **2026-02-03**
 	1. Datatable → Row,Column,Expand 방식으로 전환 (flet 0.28.3 : page.on_resize 명령어 부재)
 	2. Popup Autofocus 추가

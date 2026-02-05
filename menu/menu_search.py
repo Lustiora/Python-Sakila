@@ -50,23 +50,23 @@ def view_search_inventory(page, store_id, conn):
         ]
     )
 
-def view_search_rental():
+def view_search_rental(page, store_id, conn):
     dummy = flet.Container()
-    total_rentals, overdue, due_total, input_rental, filter_rental = build_rental_ui()
+    total_rentals, overdue, due_today, input_rental, view_rental = build_rental_ui(page, store_id, conn)
     return flet.Column(
         controls=[
             flet.Row([
                 flet.Text("Rental Status Overview", style=flet.TextThemeStyle.DISPLAY_SMALL,
                           weight=flet.FontWeight.BOLD)], height=60),
             flet.Divider(),
-            flet.Row([total_rentals, dummy, overdue, dummy, due_total]),
+            flet.Row([total_rentals, dummy, overdue, dummy, due_today]),
             dummy,
-            flet.Row([input_rental, filter_rental], height=60),
+            flet.Row([input_rental, ], height=60),
             dummy,
             flet.Column([
                 flet.Container(
                     bgcolor=flet.Colors.GREY_200,
-                    # content="", # 하단 표시 컨텐츠 (기본 대여중인 목록 전체)
+                    content=view_rental,
                     alignment=flet.alignment.top_left,
                     expand=True,
                     padding=10,

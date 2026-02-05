@@ -1,7 +1,13 @@
+import flet
+
 class Font:
     fontsize = 14
     height = fontsize + 8
     big_fontsize = 20
+    status_normal = flet.Colors.BLACK
+    status_overdue = flet.Colors.ERROR
+    status_unreturned = flet.Colors.BLUE
+    status_returned = flet.Colors.GREEN
 
 class Ratios:
     # Menu Search Customer
