@@ -1,5 +1,15 @@
 ## [README](/README.md)
 
+* **2026-02-09**
+     1. **Database Server** Synology Docker Connect
+     2. View Table rental_full_status Create 
+        * customer_id, payment_id, rental_id, base_rental_rate, rental_date, 
+        * payment_date, return_date, rental_limit_days, **days_rented**, **days_overdue**, 
+        * **est_late_fee**, overdue_paid_date, total_amount, store_id
+        * [**`Custom Sakila Database`**](https://github.com/Lustiora/Convert_Sakila)
+     3. 기존 Query 재설계 필요성 확인 
+        * 대여중 (55:54), 연체중(16:15), 금일 반납예정(3:4)
+
 * **2026-02-06**
     1. **Search Rental:** Query Case문 오류 수정
     2. **Search Rental:** `Search Rental error : ListView Control must be added to the page first` Fix
