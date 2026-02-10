@@ -83,11 +83,28 @@ Sakila 샘플 데이터베이스를 기반으로 회원 관리, 재고 관리, �
 
 * **Project Folder Console:**
 ```bash
+# .venv not Search (.gitignore > + /.venv)
+if not exist ".gitignore" (
+    echo .venv>> .gitignore
+    echo __pycache__>> .gitignore
+) else (
+    findstr ".venv" ".gitignore" >nul || echo .venv>> .gitignore
+)
+
+# Python Taskkill
+taskkill /F /IM python.exe /T >nul 2>&1
+
 # Python Command Select Folder link
-.venv\Scripts\activate
+if exist ".venv\Scripts\activate.bat" (
+    call .venv\Scripts\activate
+) else (
+    echo ❌ Error: .venv not found.
+    pause
+    exit /b
+)
 
 # Run Command
-flet run -r -w test_main_window.py
+flet run -r -v -w -p 5000 test_main_window.py
 	-r : Hot Reload (Save Refresh)
 	-w : Web Browser
 	-p : Select Port `-p 5000 => localhost:5000`

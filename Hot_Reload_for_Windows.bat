@@ -1,41 +1,31 @@
 @echo off
+chcp 65001 >nul
 cd /d "%~dp0"
 
-:START_LOOP
-cls
+if not exist ".gitignore" (
+    echo .venv>> .gitignore
+    echo __pycache__>> .gitignore
+) else (
+    findstr ".venv" ".gitignore" >nul || echo .venv>> .gitignore
+)
 
-echo ---------------------------------------------------
-echo Cleaning up Flet and Python processes...
-echo ---------------------------------------------------
-
-pause
-taskkill /F /IM flet.exe /T >nul 2>&1
 taskkill /F /IM python.exe /T >nul 2>&1
 
-echo ---------------------------------------------------
-echo Connect...
-echo ---------------------------------------------------
+if exist ".venv\Scripts\activate.bat" (
+    call .venv\Scripts\activate
+) else (
+    echo ❌ Error: .venv not found.
+    pause
+    exit /b
+)
 
-call .venv\Scripts\activate
-
 echo ---------------------------------------------------
-echo Flet Hot Reload Mode Starting...
+echo 🚀 Flet Hot Reload 🚀
 echo [Web Mode] http://localhost:34636
-echo [Exit] Ctrl + C
 echo ---------------------------------------------------
 
 flet run -r -v -w -p 34636 test_main_window.py
 
-echo ---------------------------------------------------
-echo Restart...
-echo ---------------------------------------------------
-
-set START_MODE=RESTART
-set USER_INPUT=y
-set /p USER_INPUT="Restart? (Enter: Auto / N: Exit) : "
-
-if /i "%USER_INPUT%"=="n" goto END
-goto START_LOOP
-
-:END
+echo.
+echo ❌ App Closed.
 pause
