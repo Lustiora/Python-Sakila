@@ -6,6 +6,9 @@
   2. search view table or query clean
      * view table : not_return_customer , rental_data
      * query : menu search rental (7)
+  3. Database Update (Film Table)
+     * TMDB API 추출 Update (Title, Description, Release_year, Last_update)
+     * **+ Poster_path (Poster Image Link)**
 
 * **2026-02-10**
 
