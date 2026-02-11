@@ -41,7 +41,7 @@ def build_inventory_ui(page, store_id, conn):
         try:
             cursor.execute(Search.inventory_id_query,(cart_inventory_id,))
             inventory_data = cursor.fetchall()
-            print(inventory_data)
+            # print(inventory_data)
             if inventory_data:
                 inventory_id_data.controls.clear()
                 for row in inventory_data:

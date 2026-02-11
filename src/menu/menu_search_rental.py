@@ -51,9 +51,9 @@ def build_rental_ui(page, store_id, conn):
     def rental_search_total_query(e):
         try:
             cursor = conn.cursor()
-            cursor.execute(Search.rental_search_total_query, (store_id,))
+            cursor.execute(Search.return_search_total_query, (store_id,))
             rental_id_data = cursor.fetchall()
-            print(rental_id_data)
+            # print(rental_id_data)
             if rental_id_data:
                 rental_data.controls.clear()
                 for row in rental_id_data:
@@ -109,7 +109,7 @@ def build_rental_ui(page, store_id, conn):
             cursor = conn.cursor()
             cursor.execute(Search.rental_search_overdue_query, (store_id,))
             rental_id_data = cursor.fetchall()
-            print(rental_id_data)
+            # print(rental_id_data)
             if rental_id_data:
                 rental_data.controls.clear()
                 for row in rental_id_data:
@@ -164,7 +164,7 @@ def build_rental_ui(page, store_id, conn):
             cursor = conn.cursor()
             cursor.execute(Search.rental_search_due_today_query, (store_id,))
             rental_id_data = cursor.fetchall()
-            print(rental_id_data)
+            # print(rental_id_data)
             if rental_id_data:
                 rental_data.controls.clear()
                 for row in rental_id_data:

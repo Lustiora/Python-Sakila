@@ -35,14 +35,14 @@ class Search:
 
     # <-- View Table Create -->
     # CREATE OR REPLACE VIEW public.not_return_customer as
-    #  select distinct r.customer_id
-    #  from rental r
-    #  inner join inventory i
-    #      on r.inventory_id = i.inventory_id
-    #  inner join film f
-    #      on i.film_id = f.film_id
-    #  where r.return_date is null
-    #      and r.rental_date + (f.rental_duration * INTERVAL '1 day') < now();
+    # select distinct r.customer_id
+    # from rental r
+    # inner join inventory i
+    # 	on r.inventory_id = i.inventory_id
+    # inner join film f
+    # 	on i.film_id = f.film_id
+    # where r.return_date is null
+    # 	and r.rental_date::date + f.rental_duration < CURRENT_DATE;
 
     #############################################
     # menu search inventory
@@ -100,23 +100,21 @@ class Search:
         and store_id = %s
         """
 
-    rental_search_total_query \
+    return_search_total_query \
         = """
         select 
             rental_id ,
             name ,
             title ,
-            to_char(rental_date,'YYYY-MM-DD HH24:MI:SS') as rental_date,
-            to_char(due_day,'YYYY-MM-DD HH24:MI:SS') as due_day ,
-            case
-                when due_day < today 
-                    then 'Overdue'||' ('||replace(date_trunc('day',over_due)::text,'00:00:00','1 days')||')'
-                else 'Unreturned'
+            to_char(rental_date,'YYYY-MM-DD HH24:MI:SS') as rental_date ,
+            due_day ,
+            case when over_due is null then 'Unreturned'
+                else 'Overdue'||' ('||over_due * interval '1 day'||')'
             end as status
         from rental_data
         where return_date is null
         and store_id = %s
-        order by return_date desc, rental_date desc
+        order by name
         """
 
     return_overdue_query\
@@ -124,7 +122,7 @@ class Search:
         select count(*)
         from rental_data
         where return_date is null
-        and due_day < today
+        and over_due is not null
         and store_id = %s
         """
 
@@ -134,18 +132,16 @@ class Search:
             rental_id ,
             name ,
             title ,
-            to_char(rental_date,'YYYY-MM-DD HH24:MI:SS') as rental_date,
-            to_char(due_day,'YYYY-MM-DD HH24:MI:SS') as due_day ,
-            case
-                when due_day < today 
-                    then 'Overdue'||' ('||replace(date_trunc('day',over_due)::text,'00:00:00','1 days')||')'
-                else 'Unreturned'
+            to_char(rental_date,'YYYY-MM-DD HH24:MI:SS') as rental_date ,
+            due_day ,
+            case when over_due is null then 'Unreturned'
+                else 'Overdue'||' ('||over_due * interval '1 day'||')'
             end as status
         from rental_data
         where return_date is null
-        and due_day < today
         and store_id = %s
-        order by over_due desc
+        and over_due is not null
+        order by over_due desc 
         """
 
     return_due_today_query\
@@ -153,28 +149,26 @@ class Search:
         select count(*)
         from rental_data
         where return_date is null
-        and due_day::date = today
+        and due_day = CURRENT_DATE
         and store_id = %s
         """
 
     rental_search_due_today_query \
         = """
         select 
-            rental_id,
-            name,
-            title,
-            to_char(rental_date,'YYYY-MM-DD HH24:MI:SS') as rental_date,
-            to_char(due_day,'YYYY-MM-DD HH24:MI:SS') as due_day ,
-            case
-                when due_day < today 
-                    then 'Overdue'||' ('||replace(date_trunc('day',over_due)::text,'00:00:00','1 days')||')'
-                else 'Unreturned'
+            rental_id ,
+            name ,
+            title ,
+            to_char(rental_date,'YYYY-MM-DD HH24:MI:SS') as rental_date ,
+            due_day ,
+            case when over_due is null then 'Unreturned'
+                else 'Overdue'||' ('||over_due * interval '1 day'||')'
             end as status
         from rental_data
         where return_date is null
-        and due_day::date = today
         and store_id = %s
-        order by return_date desc, rental_date desc
+        and due_day = CURRENT_DATE
+        order by name
         """
 
     rental_search_name_query\
@@ -192,18 +186,15 @@ class Search:
             rental_id ,
             name ,
             title ,
-            to_char(rental_date,'YYYY-MM-DD HH24:MI:SS') as rental_date,
-            to_char(due_day,'YYYY-MM-DD HH24:MI:SS') as due_day ,
-            case 
-                when over_due is not null 
-                    then 'Overdue'||' ('||replace(date_trunc('day',over_due)::text,'00:00:00','1 days')||')'
-                when today < due_day then 'Unreturned'
-                else 'Returned' 
+            to_char(rental_date,'YYYY-MM-DD HH24:MI:SS') as rental_date ,
+            due_day ,
+            case when over_due is null then 'Unreturned'
+                else 'Overdue'||' ('||over_due * interval '1 day'||')'
             end as status
         from rental_data
         where store_id = %s
         and rental_id = ANY(%s)
-        order by return_date desc, rental_date desc
+        order by name , rental_date desc , over_due desc
         """
 
     # <-- View Table Create -->
@@ -213,81 +204,74 @@ class Search:
     # 	c.first_name ||' '||c.last_name as name ,
     # 	f.title ,
     # 	r.rental_date ,
-    # 	r.rental_date + (interval '1 day' * f.rental_duration) as due_day ,
+    # 	(r.rental_date::date + f.rental_duration) as due_day ,
     # 	r.return_date ,
     # 	f.rental_duration ,
     # 	case
     # 		when r.return_date is null
-    # 			and CURRENT_DATE > r.rental_date + (interval '1 day' * f.rental_duration)
-    # 			then CURRENT_DATE - (r.rental_date + (interval '1 day' * f.rental_duration))
+    # 			and CURRENT_DATE > (r.rental_date::date + f.rental_duration)
+    # 			then (CURRENT_DATE - (r.rental_date::date + f.rental_duration))
     # 	end as over_due ,
-    # 	CURRENT_DATE as today ,
-    # 	c.store_id
+    # 	i.store_id
     # from rental r
     # inner join customer c
     # 	on r.customer_id = c.customer_id
     # inner join inventory i
     # 	on r.inventory_id = i.inventory_id
     # inner join film f
-    # 	on i.film_id = f.film_id
-    # order by r.rental_date , f.rental_duration);
+    # 	on i.film_id = f.film_id);
 
     # <-- View Table Create -->
     # CREATE OR REPLACE VIEW public.rental_full_status as (
     # select
-    # 	r.customer_id as customer_id , -- 고객 ID
-    # 	p.payment_id as payment_id , -- 결제 ID
-    # 	r.rental_id as rental_id , -- 대여 ID
-    # 	i.inventory_id as inventory_id , -- 재고 ID
-    # 	i.store_id as item_store_id ,-- 대여 매장 ID
-    # 	c.store_id as customer_store_id , -- 고객 소속 매장 ID
-    # 	f.rental_rate as base_rental_rate , -- 기본 대여료($)
-    # 	to_char(r.rental_date,'YYYY-MM-DD HH24:MI:SS') as rental_date , -- 대여 시작일
-    # 	to_char(p.payment_date,'YYYY-MM-DD HH24:MI:SS') as payment_date , -- 결제일
-    # 	to_char(r.return_date,'YYYY-MM-DD HH24:MI:SS') as return_date , -- 반납일
-    # 	f.rental_duration * INTERVAL '1 day' as rental_limit_days , -- 대여가능기간
-    # 	case
-    # 		when r.return_date is not null
-    # 			then (r.return_date::date - r.rental_date::date) * INTERVAL '1 day'
-    # 		else (now()::date - r.rental_date::date) * INTERVAL '1 day'
-    # 	end as days_rented , -- 고객대여기간
-    # 	case
-    # 		when r.return_date is not null
-    # 		and ((r.return_date::date - r.rental_date::date) * INTERVAL '1 day') - (f.rental_duration * INTERVAL '1 day') > (0 * INTERVAL '1 day')
-    # 			then ((r.return_date::date - r.rental_date::date) * INTERVAL '1 day') - (f.rental_duration * INTERVAL '1 day')
-    # 		when r.return_date is null
-    # 		and (r.rental_date::date + f.rental_duration * INTERVAL '1 day')::date < now()::date
-    # 			then (now()::date - (r.rental_date::date + f.rental_duration * INTERVAL '1 day')::date) * INTERVAL '1 day'
-    # 	end as days_overdue , -- 연체 기간
-    # 	case
-    # 		when r.return_date is not null
-    # 		and (r.return_date::date - r.rental_date::date) > f.rental_duration
-    # 			then (r.return_date::date - r.rental_date::date) * 1.0 - f.rental_duration
-    # 		when r.return_date is null
-    # 		and (r.rental_date::date + f.rental_duration * INTERVAL '1 day')::date < now()::date
-    # 			then (now()::date - (r.rental_date::date + f.rental_duration * INTERVAL '1 day')::date)
-    # 	end as est_late_fee , -- (예상) 연체료($)
-    # 	case
-    # 		when r.return_date is not null
-    # 		and ((r.return_date::date - r.rental_date::date) * INTERVAL '1 day') - (f.rental_duration * INTERVAL '1 day') > (0 * INTERVAL '1 day')
-    # 			then to_char(r.return_date,'YYYY-MM-DD HH24:MI:SS')
-    # 	end as overdue_paid_date , -- 연체료 결제일
-    # 	'$'||coalesce(
-    # 		case
-    # 			when r.return_date is not null
-    # 			and (r.return_date::date - r.rental_date::date) > f.rental_duration
-    # 				then (r.return_date::date - r.rental_date::date) * 1.0 - f.rental_duration
-    # 		end
-    # 	,0.0) + f.rental_rate||' ($'||f.rental_rate||')' as total_amount -- 총결제액 (기본 대여료)
+    #     r.customer_id as customer_id , -- "고객 ID"
+    #     p.payment_id as payment_id , -- "결제 ID"
+    #     r.rental_id as rental_id , -- "대여 ID"
+    #     i.inventory_id as inventory_id , -- "재고 ID"
+    #     i.store_id as item_store_id ,-- "대여 매장 ID"
+    #     c.store_id as customer_store_id , -- "고객 소속 매장 ID"
+    #     f.rental_rate as base_rental_rate , -- "기본 대여료($)""
+    #     to_char(r.rental_date,'YYYY-MM-DD HH24:MI:SS') as rental_date , -- "대여 시작일"
+    #     to_char(p.payment_date,'YYYY-MM-DD HH24:MI:SS') as payment_date , -- "결제일"
+    #     to_char(r.return_date,'YYYY-MM-DD HH24:MI:SS') as return_date , -- "반납일"
+    #     f.rental_duration * INTERVAL '1 day' as rental_limit_days , -- "대여가능기간"
+    #     greatest(0,
+    #     case
+    #         when r.return_date is not null
+    #             then (r.return_date::date - r.rental_date::date)
+    #         else (CURRENT_DATE - r.rental_date::date)
+    #     end) * INTERVAL '1 day' as days_rented , -- "고객대여기간"
+    #     case
+    #         when r.return_date is not null
+    #         and ((r.return_date::date - r.rental_date::date) * INTERVAL '1 day') - (f.rental_duration * INTERVAL '1 day') > (0 * INTERVAL '1 day')
+    #             then ((r.return_date::date - r.rental_date::date) * INTERVAL '1 day') - (f.rental_duration * INTERVAL '1 day')
+    #         when r.return_date is null
+    #         and (r.rental_date::date + f.rental_duration * INTERVAL '1 day')::date < CURRENT_DATE
+    #             then (CURRENT_DATE - (r.rental_date::date + f.rental_duration * INTERVAL '1 day')::date) * INTERVAL '1 day'
+    #     end as days_overdue , -- "연체 기간"
+    #     case
+    #         when r.return_date is not null
+    #         and (r.return_date::date - r.rental_date::date) > f.rental_duration
+    #             then least(((r.return_date::date - r.rental_date::date) - f.rental_duration) * 1.0 , f.replacement_cost)
+    #         when r.return_date is null
+    #         and (r.rental_date::date + f.rental_duration * INTERVAL '1 day')::date < CURRENT_DATE
+    #             then least((CURRENT_DATE - (r.rental_date::date + f.rental_duration * INTERVAL '1 day')::date) , f.replacement_cost)
+    #     end as est_late_fee , -- "연체료"
+    #     case
+    #         when r.return_date is not null
+    #         and ((r.return_date::date - r.rental_date::date) * INTERVAL '1 day') - (f.rental_duration * INTERVAL '1 day') > (0 * INTERVAL '1 day')
+    #             then to_char(r.return_date,'YYYY-MM-DD HH24:MI:SS')
+    #     end as overdue_paid_date , -- "연체료 결제일"
+    #     p.amount as total_amount -- "총 결제액 (기본 대여료)"
     # from payment p
     # left join rental r
-    # 	on p.rental_id = r.rental_id
+    #     on p.rental_id = r.rental_id
     # inner join customer c
     # on r.customer_id = c.customer_id
     # inner join inventory i
-    # 	on r.inventory_id = i.inventory_id
+    #     on r.inventory_id = i.inventory_id
     # inner join film f
-    # 	on i.film_id = f.film_id);
+    #     on i.film_id = f.film_id);
 
 class Rental:
 

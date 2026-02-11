@@ -1,5 +1,12 @@
 ## [README](/README.md)
 
+* **2026-02-11**
+  1. test Hot Reload Fix
+     * 윈도우 지연 실행 문제 해결
+  2. search view table or query clean
+     * view table : not_return_customer , rental_data
+     * query : menu search rental (7)
+
 * **2026-02-10**
 
   1. View Table rental_full_status 보완
