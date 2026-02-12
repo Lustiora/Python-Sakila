@@ -40,7 +40,7 @@ def build_rental_ui(page, store_id, conn):
             cursor.execute(Search.return_due_today_query, (store_id,))
             due_total_data = cursor.fetchone()
             if due_total_data:
-                print(f"Total Rentals: {due_total_data[0]}")
+                print(f"Due Today: {due_total_data[0]}")
                 return due_total_data[0]
             else:
                 print("조회 실패")
@@ -295,7 +295,7 @@ def build_rental_ui(page, store_id, conn):
             cursor = conn.cursor()
             cursor.execute(Search.rental_search_id_query, (store_id, cart_customer_id))
             rental_id_data = cursor.fetchall()
-            print(rental_id_data)
+            # print(rental_id_data)
             if rental_id_data:
                 rental_data.controls.clear()
                 for row in rental_id_data:
@@ -351,18 +351,28 @@ def build_rental_ui(page, store_id, conn):
         text_size=Font.big_fontsize, expand=Ratios.id, content_padding=10, max_length=30, autofocus=True)
 
     # Filter
-    # filter_rental = flet.Column(
+    # filter_rental = flet.Row(
     #     controls=[
     #         flet.Dropdown(
     #             label="Filter",
+    #             value="name_asc",
     #             bgcolor=flet.Colors.PRIMARY_CONTAINER,
+    #             on_change="",
     #             options=[
-    #                 flet.DropdownOption("Total Rentals"),
-    #                 flet.DropdownOption("Overdue"),
-    #                 flet.DropdownOption("Due Today"),
+    #                 flet.DropdownOption(text="ID ▲", key="id_asc"),
+    #                 flet.DropdownOption(text="ID ▼", key="id_desc"),
+    #                 flet.DropdownOption(text="Name ▲", key="name_asc"),
+    #                 flet.DropdownOption(text="Name ▼", key="name_desc"),
+    #                 flet.DropdownOption(text="Rental Date ▲", key="rental_date_asc"),
+    #                 flet.DropdownOption(text="Rental Date ▼", key="rental_date_desc"),
+    #                 flet.DropdownOption(text="Due Date ▲", key="due_date_asc"),
+    #                 flet.DropdownOption(text="Due Date ▼", key="due_date_desc"),
+    #                 flet.DropdownOption(text="Over Due ▲", key="over_due_asc"),
+    #                 flet.DropdownOption(text="Over Due ▼", key="over_due_desc"),
     #             ]
     #         )
-    #     ],alignment=flet.MainAxisAlignment.CENTER)
+    #     ]
+    # )
 
     header = flet.Container(
         content = flet.Row(

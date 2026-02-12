@@ -1,5 +1,28 @@
 ## [README](/README.md)
 
+* **2026-02-12**
+  1. search rental menu filter 추가 실패
+     * Dropdown menu 를 사용하여 연동 시 Container Button과의 충돌 발생 (e.control.valve)
+  2. Database Update (Film Table)
+     * TMDB API를 사용하여 Film Table Column을 최대한도로 강화
+      ```bash
+      title = 'Greenland 2: Migration'
+      , description = 'Having found the safety of the ...'
+      , release_year = '2026'
+      , language_id = '1'
+      , rental_duration = '7'
+      , rental_rate = '0.99'
+      , length = '98'
+      , replacement_cost = '21.99'
+      , rating = 'PG-13'
+      , last_update = '2026-02-12'
+      , special_features = '{}'::_text
+      , fulltext = $$Adventure Thriller Science Fiction $$
+      , poster_path = '/z2tqCJLsw6uEJ8nJV8BsQXGa3dr.jpg'
+      ```
+  3. menu search rental query 수정
+    * Customer Name Search → 'Returned' 항목 누락
+
 * **2026-02-11**
   1. test Hot Reload Fix
      * 윈도우 지연 실행 문제 해결

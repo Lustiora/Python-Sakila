@@ -1,6 +1,6 @@
 # 로그 메시지 출력
 import logging
-level=logging.DEBUG # DEBUG, INFO, WARNING, ERROR, CRITICAL
+level=logging.INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
 # ============================================================================
 # [Logging Levels]
 # 1. CRITICAL (50) : 🚨 시스템 붕괴 (엔진 폭발) -> 앱이 죽기 직전

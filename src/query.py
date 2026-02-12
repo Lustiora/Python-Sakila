@@ -188,8 +188,10 @@ class Search:
             title ,
             to_char(rental_date,'YYYY-MM-DD HH24:MI:SS') as rental_date ,
             due_day ,
-            case when over_due is null then 'Unreturned'
-                else 'Overdue'||' ('||over_due * interval '1 day'||')'
+            case 
+                when return_date is null and over_due is null then 'Unreturned'
+                when return_date is null and over_due is not null then 'Overdue'||' ('||over_due * interval '1 day'||')'
+                else 'Returned'
             end as status
         from rental_data
         where store_id = %s
