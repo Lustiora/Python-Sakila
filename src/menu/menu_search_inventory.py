@@ -77,8 +77,8 @@ def build_inventory_ui(page, store_id, conn):
                                         no_wrap=True, overflow=flet.TextOverflow.ELLIPSIS, tooltip=row[3], color=status_color),
                                     flet.VerticalDivider(width=1, color=flet.Colors.PRIMARY),
                                     flet.Text(
-                                        str(row[4])[:10], expand=Ratios.date, text_align="center",
-                                        no_wrap=True, overflow=flet.TextOverflow.ELLIPSIS, tooltip=str(row[4])[:10]),
+                                        str(row[4]), expand=Ratios.date, text_align="center",
+                                        no_wrap=True, overflow=flet.TextOverflow.ELLIPSIS, tooltip=str(row[4])),
                                     flet.VerticalDivider(width=1, color=flet.Colors.PRIMARY),
                                     flet.Text(
                                         str(row[5]), expand=Ratios.rate, text_align="center",

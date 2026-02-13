@@ -1,10 +1,22 @@
 ## [README](/README.md)
 
+* **2026-02-13**
+  1. Database Update (Actor, Category, ... Table)
+     * **Film Table**:
+       * Column special_features Delete → 미사용
+       * Column fulltext Not Update → Update, Insert: **Auto Update**
+     * **Actor Table**:
+       * TMDB Movie Credits Crawling
+     * **Category Table**:
+       * TMDB Movie Genres Crawling
+       * film_actor, film_category Table Connect
+  2. Database Update에 따른 View Query Update 진행중
+
 * **2026-02-12**
   1. search rental menu filter 추가 실패
      * Dropdown menu 를 사용하여 연동 시 Container Button과의 충돌 발생 (e.control.valve)
   2. Database Update (Film Table)
-     * TMDB API를 사용하여 Film Table Column을 최대한도로 강화
+     * TMDB API Crawling. Film Table Column 최대한도로 강화
       ```bash
       title = 'Greenland 2: Migration'
       , description = 'Having found the safety of the ...'
